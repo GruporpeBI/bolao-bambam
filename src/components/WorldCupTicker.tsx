@@ -124,7 +124,7 @@ export default function WorldCupTicker() {
           {/* Countdown */}
           <div className="wc-countdown">
             <div className="wc-logo">
-              <img src="https://www.sofascore.com/static/images/tournaments/world-cup-2026-logo.webp" alt="World Cup 2026" />
+              <img src="/api/flag/wc-logo" alt="World Cup 2026" />
             </div>
             <div className="wc-time" aria-label="Contagem regressiva para a Copa do Mundo">
               <span className="wc-num">{cd.d}</span><span className="wc-unit">d</span>
@@ -152,7 +152,7 @@ export default function WorldCupTicker() {
                         <img
                           key={id}
                           className="wc-flag"
-                          src={`https://img.sofascore.com/api/v1/team/${id}/image`}
+                          src={`/api/flag/${id}`}
                           alt={alt}
                           loading="lazy"
                         />
