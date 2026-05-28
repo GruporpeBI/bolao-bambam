@@ -124,8 +124,7 @@ export default function WorldCupTicker() {
           {/* Countdown */}
           <div className="wc-countdown">
             <div className="wc-logo">
-              <img src="/static/images/tournaments/world-cup-2026-logo.webp" alt="World Cup 2026"
-                onError={(e) => { (e.target as HTMLImageElement).src = "https://www.sofascore.com/static/images/tournaments/world-cup-2026-logo.webp"; }} />
+              <img src="https://www.sofascore.com/static/images/tournaments/world-cup-2026-logo.webp" alt="World Cup 2026" />
             </div>
             <div className="wc-time" aria-label="Contagem regressiva para a Copa do Mundo">
               <span className="wc-num">{cd.d}</span><span className="wc-unit">d</span>
