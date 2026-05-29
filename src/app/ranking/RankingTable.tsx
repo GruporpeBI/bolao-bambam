@@ -27,6 +27,7 @@ interface GameRankingEntry {
 interface GameRanking {
   gameId: string;
   label: string;
+  scheduledAt: string;
   home_score: number | null;
   away_score: number | null;
   entries: GameRankingEntry[];
@@ -236,7 +237,18 @@ export default function RankingTable({ initialData, gameRankings }: RankingTable
           {currentGameRanking && (
             <>
               <div className="flex items-center gap-3 mb-6 flex-wrap">
-                <h2 className="text-lg font-bold text-[#FAF6EB]">{currentGameRanking.label}</h2>
+                <div className="flex flex-col gap-0.5">
+                  <h2 className="text-lg font-bold text-[#FAF6EB]">{currentGameRanking.label}</h2>
+                  <span className="text-[#FAF6EB]/40 text-xs">
+                    {new Date(currentGameRanking.scheduledAt).toLocaleDateString("pt-BR", {
+                      weekday: "short", day: "2-digit", month: "2-digit",
+                    })}{" "}
+                    às{" "}
+                    {new Date(currentGameRanking.scheduledAt).toLocaleTimeString("pt-BR", {
+                      hour: "2-digit", minute: "2-digit",
+                    })}
+                  </span>
+                </div>
                 {currentGameRanking.home_score !== null ? (
                   <>
                     <span className="text-[#F6C900] font-black text-xl">

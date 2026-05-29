@@ -28,6 +28,7 @@ interface GameRankingEntry {
 interface GameRanking {
   gameId: string;
   label: string;
+  scheduledAt: string;
   home_score: number | null;
   away_score: number | null;
   entries: GameRankingEntry[];
@@ -147,6 +148,7 @@ export default async function RankingPage() {
         gameRankings.push({
           gameId: game.id,
           label: `${teamName(game.home_team)} × ${teamName(game.away_team)}`,
+          scheduledAt: game.scheduled_at,
           home_score: game.home_score,
           away_score: game.away_score,
           entries,
