@@ -6,6 +6,7 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import BirthDatePicker from "@/components/ui/BirthDatePicker";
 import { registerUser, checkCpfExists, loginByCpf } from "./actions";
+import RegisterModal from "./RegisterModal";
 
 /* ── helpers ─────────────────────────────────────────────── */
 
@@ -48,6 +49,7 @@ export default function CadastroForm() {
   const [loginStatus, setLoginStatus] = useState<LoginStatus>("idle");
   const [loginName, setLoginName] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const checkRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /* — estado: modo cadastro — */
@@ -81,6 +83,7 @@ export default function CadastroForm() {
         setLoginName(result.name ?? "");
       } else {
         setLoginStatus("not_found");
+        setShowRegisterModal(true);
       }
     }, 400);
   }, [loginCpf]);
@@ -164,6 +167,14 @@ export default function CadastroForm() {
 
   return (
     <div className="flex flex-col gap-0">
+
+      {/* ── Modal de cadastro automático ── */}
+      {showRegisterModal && (
+        <RegisterModal
+          cpf={loginCpf}
+          onClose={() => setShowRegisterModal(false)}
+        />
+      )}
 
       {/* ── Tab toggle ── */}
       <div className="flex rounded-sm overflow-hidden border border-[#F6C900]/20 mb-6">
