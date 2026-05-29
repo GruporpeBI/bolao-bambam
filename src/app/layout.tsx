@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import WorldCupTicker from "@/components/WorldCupTicker";
+import NavBar from "@/components/NavBar";
 
 const geist = Geist({
   variable: "--font-geist-sans",
@@ -21,6 +22,7 @@ export default function RootLayout({
     <html lang="pt-BR" className={`${geist.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-[#1A1A1A] text-[#FAF6EB]">
         <WorldCupTicker />
+        <NavBar />
         {children}
       </body>
     </html>
