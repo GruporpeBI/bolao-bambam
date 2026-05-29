@@ -139,11 +139,11 @@ async function main() {
 
       console.log(`[poll] event=${id} score=${newHomeScore}-${newAwayScore} posse=${possession.home} status=${newStatusType}`);
 
-      // Detecta transição para finished
-      const wasFinished = isFinished(game.status_type);
-      if (isFinished(newStatusType) && !wasFinished) {
-        console.log(`[poll] Jogo finalizado (event=${id}) — notificando app`);
-        await notifyApp(id, newHomeScore, newAwayScore, possession.home);
+      // Recalcula pontuação a cada poll (presença + palpites com placar atual)
+      await notifyApp(id, newHomeScore, newAwayScore, possession.home);
+
+      if (isFinished(newStatusType) && !isFinished(game.status_type)) {
+        console.log(`[poll] Jogo finalizado (event=${id})`);
       }
 
     } catch (err) {

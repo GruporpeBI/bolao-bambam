@@ -229,15 +229,14 @@ Deno.serve(async (req: Request) => {
 
     updated++;
 
-    // If the game just finished, notify Next.js to recalculate scores
+    // Recalcula pontuação a cada poll (presença + palpites com placar atual)
+    const isNowFinished = newStatusType === "finished";
     const wasFinished =
       game.status_type === "finished" ||
       game.status_type === "canceled" ||
       game.status_type === "postponed";
 
-    const isNowFinished = newStatusType === "finished";
-
-    if (isNowFinished && !wasFinished) {
+    if (!wasFinished) {
       const notifyResult = await notifyScoreRecalculation({
         event_id: eventId,
         home_score: newHomeScore,
@@ -246,10 +245,10 @@ Deno.serve(async (req: Request) => {
       });
 
       if (notifyResult.ok) {
-        notifications.push(`Notified finish for event ${eventId}`);
+        notifications.push(`Recalculated scores for event ${eventId}${isNowFinished && !wasFinished ? " (final)" : ""}`);
       } else {
         errors.push(
-          `Notification failed for event ${eventId}: ${notifyResult.error}`
+          `Recalculate failed for event ${eventId}: ${notifyResult.error}`
         );
       }
     }

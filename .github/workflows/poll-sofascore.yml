@@ -33,4 +33,15 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           APP_URL: ${{ secrets.APP_URL }}
           SYNC_SECRET: ${{ secrets.SYNC_SECRET }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: node scripts/poll-sofascore.mjs
+
+      - name: Recalculate scores
+        if: always()
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -s -o /dev/null -w "recalculate: HTTP %{http_code}\n" \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$APP_URL/api/cron/recalculate"
