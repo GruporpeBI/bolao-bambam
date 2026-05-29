@@ -357,9 +357,9 @@ export default function CadastroForm() {
             label="Nome completo"
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value.toUpperCase().replace(/[^A-ZÀ-Ú\s]/g, ""))}
             error={regErrors.name}
-            placeholder="João da Silva"
+            placeholder="JOÃO DA SILVA"
             autoComplete="name"
             disabled={isRegLoading}
           />
