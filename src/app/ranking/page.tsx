@@ -53,6 +53,8 @@ function gamePts(
 export default async function RankingPage() {
   let top10: ScoreRow[] = [];
   let gameRankings: GameRanking[] = [];
+  type LiveGame = { id: string; home_team: string; away_team: string; home_score: number; away_score: number; ball_possession_home: number | null; status_type: string | null; status_description: string | null };
+  let liveGames: LiveGame[] = [];
 
   try {
     const supabase = await createClient();
@@ -86,6 +88,14 @@ export default async function RankingPage() {
       })
       .sort((a, b) => b.total_pts - a.total_pts)
       .slice(0, 10);
+
+    // ── Jogos ao vivo (com placar atual do Sofascore) ──
+    const { data: liveGamesRaw } = await supabase
+      .from("games")
+      .select("id, home_team, away_team, home_score, away_score, ball_possession_home, status_type, status_description")
+      .not("home_score", "is", null)
+      .not("status_type", "in", '("finished","canceled","postponed")');
+    liveGames = (liveGamesRaw as LiveGame[] | null) ?? [];
 
     // ── Ranking por Jogo: jogos com resultado no dia do jogo ou dia seguinte ──
     // Janela: yesterday 00:00 Brasília até hoje 23:59 Brasília
@@ -173,6 +183,32 @@ export default async function RankingPage() {
           <Badge variant="green" className="text-xs">
             Atualizado em tempo real
           </Badge>
+
+          {/* Placar ao vivo */}
+          {liveGames.length > 0 && (
+            <div className="flex flex-col gap-2 w-full max-w-sm mt-2">
+              {liveGames.map((g) => (
+                <div key={g.id} className="bg-[#004600]/60 border border-green-500/30 rounded-sm px-4 py-3 flex flex-col gap-1">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse shrink-0" />
+                    <span className="text-green-400 text-xs font-bold uppercase tracking-wider">
+                      {g.status_description ?? "Ao vivo"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-3 mt-1">
+                    <span className="text-[#FAF6EB] font-semibold text-sm">{teamName(g.home_team)}</span>
+                    <span className="text-[#F6C900] font-black text-2xl">{g.home_score} × {g.away_score}</span>
+                    <span className="text-[#FAF6EB] font-semibold text-sm">{teamName(g.away_team)}</span>
+                  </div>
+                  {g.ball_possession_home != null && (
+                    <p className="text-[#FAF6EB]/50 text-xs text-center mt-0.5">
+                      Posse: {teamName(g.home_team)} {g.ball_possession_home}% · {teamName(g.away_team)} {100 - g.ball_possession_home}%
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
