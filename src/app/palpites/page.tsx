@@ -4,6 +4,7 @@ import Badge from "@/components/ui/Badge";
 import GameCard from "./GameCard";
 import TournamentPredictions from "./TournamentPredictions";
 import CheckInButton from "./CheckInButton";
+import { getLocationConfig } from "@/app/admin/actions";
 import type { Database } from "@/lib/supabase/types";
 
 type GameRow = Database["public"]["Tables"]["games"]["Row"];
@@ -47,6 +48,8 @@ export default async function PalpitesPage() {
   const todayBrazilGame = allEnabled.find(
     (g) => g.is_brazil_game && gameDayBrasilia(g.scheduled_at) === today
   ) ?? null;
+
+  const locationConfig = await getLocationConfig();
 
   let predictions: Record<string, {
     home_score_pred: number;
@@ -137,7 +140,13 @@ export default async function PalpitesPage() {
 
         {/* ── CHECK-IN POR GEOLOCALIZAÇÃO ── */}
         {dbUserId && todayBrazilGame && (
-          <CheckInButton gameId={todayBrazilGame.id} alreadyCheckedIn={alreadyCheckedIn} />
+          <CheckInButton
+            gameId={todayBrazilGame.id}
+            alreadyCheckedIn={alreadyCheckedIn}
+            restaurantLat={locationConfig.lat}
+            restaurantLng={locationConfig.lng}
+            radiusM={locationConfig.radiusM}
+          />
         )}
 
         {/* ── JOGOS ── */}

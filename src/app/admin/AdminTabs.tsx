@@ -7,6 +7,7 @@ import GameRow from "./GameRow";
 import ResultModal from "./ResultModal";
 import SyncButton from "./SyncButton";
 import { recalculateScores, checkInUser } from "./actions";
+import LocationConfig from "./LocationConfig";
 
 interface Game {
   id: string;
@@ -38,11 +39,12 @@ interface AdminTabsProps {
   games: Game[];
   users: UserRow[];
   attendances: AttendanceRow[];
+  locationConfig: { lat: number; lng: number; radiusM: number };
 }
 
-type Tab = "games" | "results" | "attendances";
+type Tab = "games" | "results" | "attendances" | "localizacao";
 
-export default function AdminTabs({ games, users, attendances }: AdminTabsProps) {
+export default function AdminTabs({ games, users, attendances, locationConfig }: AdminTabsProps) {
   const [tab, setTab] = useState<Tab>("games");
   const [recalcStatus, setRecalcStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [recalcMsg, setRecalcMsg] = useState("");
@@ -87,6 +89,9 @@ export default function AdminTabs({ games, users, attendances }: AdminTabsProps)
         </button>
         <button className={tabClass("attendances")} onClick={() => setTab("attendances")}>
           Presenças
+        </button>
+        <button className={tabClass("localizacao")} onClick={() => setTab("localizacao")}>
+          Localização
         </button>
       </div>
 
@@ -258,6 +263,19 @@ export default function AdminTabs({ games, users, attendances }: AdminTabsProps)
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {tab === "localizacao" && (
+        <div>
+          <div className="mb-5">
+            <p className="text-[#F6C900] font-bold text-base mb-1">Configuração de Geolocalização</p>
+          </div>
+          <LocationConfig
+            initialLat={locationConfig.lat}
+            initialLng={locationConfig.lng}
+            initialRadius={locationConfig.radiusM}
+          />
         </div>
       )}
     </div>

@@ -365,3 +365,37 @@ export async function checkInUser(
   revalidatePath("/admin");
   return { success: true };
 }
+
+// ── Configurações de Geolocalização ──────────────────────────────────────────
+
+export async function getLocationConfig(): Promise<{
+  lat: number; lng: number; radiusM: number;
+}> {
+  const supabase = getAdminClient();
+  const { data } = await supabase.from("app_config").select("key, value");
+  const map = Object.fromEntries((data ?? []).map((r: { key: string; value: string }) => [r.key, r.value]));
+  return {
+    lat: parseFloat(map.restaurant_lat ?? "-23.550520"),
+    lng: parseFloat(map.restaurant_lng ?? "-46.633309"),
+    radiusM: parseInt(map.checkin_radius_m ?? "400", 10),
+  };
+}
+
+export async function saveLocationConfig(
+  lat: number,
+  lng: number,
+  radiusM: number
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = getAdminClient();
+  const rows = [
+    { key: "restaurant_lat",  value: String(lat),     updated_at: new Date().toISOString() },
+    { key: "restaurant_lng",  value: String(lng),     updated_at: new Date().toISOString() },
+    { key: "checkin_radius_m", value: String(radiusM), updated_at: new Date().toISOString() },
+  ];
+  const { error } = await supabase
+    .from("app_config")
+    .upsert(rows as never[], { onConflict: "key" });
+  if (error) return { success: false, error: error.message };
+  revalidatePath("/admin");
+  return { success: true };
+}

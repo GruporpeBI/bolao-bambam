@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { IconEscudo } from "@/components/icons";
 import AdminTabs from "./AdminTabs";
 import LogoutButton from "./LogoutButton";
+import { getLocationConfig } from "./actions";
 import type { Database } from "@/lib/supabase/types";
 
 type GameRow = Database["public"]["Tables"]["games"]["Row"];
@@ -39,6 +40,7 @@ export default async function AdminPage() {
   const games = (gamesData as GameRow[] | null) ?? [];
   const users = (usersData as Pick<UserRow, "id" | "name">[] | null) ?? [];
   const attendances = (attendancesData as Pick<AttendanceRow, "user_id" | "game_id">[] | null) ?? [];
+  const locationConfig = await getLocationConfig();
 
   return (
     <main className="min-h-screen bg-[#1A1A1A]">
@@ -58,6 +60,7 @@ export default async function AdminPage() {
           games={games}
           users={users}
           attendances={attendances}
+          locationConfig={locationConfig}
         />
       </div>
     </main>

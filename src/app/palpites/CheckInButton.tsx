@@ -6,6 +6,9 @@ import { selfCheckIn } from "./actions";
 interface CheckInButtonProps {
   gameId: string;
   alreadyCheckedIn: boolean;
+  restaurantLat: number;
+  restaurantLng: number;
+  radiusM: number;
 }
 
 function haversineMeters(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -21,13 +24,9 @@ function haversineMeters(lat1: number, lng1: number, lat2: number, lng2: number)
 
 type Status = "idle" | "locating" | "checking" | "success" | "far" | "error" | "done";
 
-export default function CheckInButton({ gameId, alreadyCheckedIn }: CheckInButtonProps) {
+export default function CheckInButton({ gameId, alreadyCheckedIn, restaurantLat, restaurantLng, radiusM }: CheckInButtonProps) {
   const [status, setStatus] = useState<Status>(alreadyCheckedIn ? "done" : "idle");
   const [message, setMessage] = useState("");
-
-  const restaurantLat = parseFloat(process.env.NEXT_PUBLIC_RESTAURANT_LAT ?? "0");
-  const restaurantLng = parseFloat(process.env.NEXT_PUBLIC_RESTAURANT_LNG ?? "0");
-  const radiusM = parseInt(process.env.NEXT_PUBLIC_CHECKIN_RADIUS_M ?? "200", 10);
 
   async function handleCheckIn() {
     if (!navigator.geolocation) {
