@@ -4,6 +4,7 @@ import Badge from "@/components/ui/Badge";
 import GameCard from "./GameCard";
 import TournamentPredictions from "./TournamentPredictions";
 import { getLocationConfig } from "@/app/admin/actions";
+import CheckInTrigger from "./CheckInTrigger";
 import type { Database } from "@/lib/supabase/types";
 
 type GameRow = Database["public"]["Tables"]["games"]["Row"];
@@ -113,6 +114,9 @@ export default async function PalpitesPage() {
             </p>
           </div>
         </div>
+
+        {/* Check-in silencioso ao entrar na página (também cobre quem já estava logado) */}
+        <CheckInTrigger isLoggedIn={!!dbUserId} />
 
         {!dbUserId && (
           <div className="border border-[#F6C900]/20 rounded-sm px-5 py-4 mb-8 text-[#FAF6EB]/70 text-sm">
