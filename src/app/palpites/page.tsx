@@ -115,9 +115,9 @@ export default async function PalpitesPage() {
           </div>
         </div>
 
-        {/* Check-in silencioso ao entrar na página */}
+        {/* Check-in ao entrar na página — só pede geolocalização se ainda não fez check-in */}
         <CheckInTrigger
-          gameId={dbUserId && todayBrazilGame ? todayBrazilGame.id : null}
+          gameId={dbUserId && todayBrazilGame && !alreadyCheckedIn ? todayBrazilGame.id : null}
           restaurantLat={locationConfig.lat}
           restaurantLng={locationConfig.lng}
           radiusM={locationConfig.radiusM}
