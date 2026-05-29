@@ -5,6 +5,7 @@ import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { getWorldCupMatches } from "@/lib/football-api";
 import { revalidatePath } from "next/cache";
 import type { Database } from "@/lib/supabase/types";
+import { teamName } from "@/lib/team-names";
 
 function getAdminClient() {
   return createServiceClient<Database>(
@@ -132,7 +133,7 @@ export async function updateGameResult(
 }
 
 export async function recalculateScores(): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createClient();
+  const supabase = getAdminClient();
 
   const { data: gamesData } = await supabase
     .from("games")
@@ -216,56 +217,99 @@ export async function recalculateScores(): Promise<{ success: boolean; error?: s
     }
   }
 
+  // ── Busca semifinais com resultado ───────────────────────────────────────
   const { data: semiFinalGamesData } = await supabase
     .from("games")
     .select("home_team, away_team, home_score, away_score")
     .eq("stage", "semifinal")
-    .not("home_score", "is", null);
+    .not("home_score", "is", null)
+    .not("away_score", "is", null);
 
-  const semiFinalGames = (semiFinalGamesData as Pick<GameRow, "home_team" | "away_team" | "home_score" | "away_score">[] | null) ?? [];
+  type SemiGame = Pick<GameRow, "home_team" | "away_team" | "home_score" | "away_score">;
+  const semiFinalGames = (semiFinalGamesData as SemiGame[] | null) ?? [];
 
-  const actualSemifinalists = new Set<string>();
-  for (const sg of semiFinalGames) {
-    actualSemifinalists.add(sg.home_team);
-    actualSemifinalists.add(sg.away_team);
-  }
+  // Nomes em PT para comparar com tournament_predictions (que usa PT)
+  type SemiResultPT = { home: string; away: string; homeScore: number; awayScore: number };
+  const actualSemiResults: SemiResultPT[] = semiFinalGames.map((sg) => ({
+    home: teamName(sg.home_team),       // EN → PT
+    away: teamName(sg.away_team),       // EN → PT
+    homeScore: sg.home_score as number,
+    awayScore: sg.away_score as number,
+  }));
 
+  const actualSemifinalistsPT = new Set<string>(
+    actualSemiResults.flatMap((r) => [r.home, r.away])
+  );
+
+  // ── Nomes do jogo da final em PT ─────────────────────────────────────────
+  const finalHomePT = finalGame ? teamName(finalGame.home_team) : "";
+  const finalAwayPT = finalGame ? teamName(finalGame.away_team) : "";
+
+  // ── Loop: palpites do torneio ─────────────────────────────────────────────
   for (const tp of tournamentPredictions) {
     const uid = tp.user_id;
     if (!scoresByUser[uid]) continue;
 
-    const semifinalists = [tp.semi1, tp.semi2, tp.semi3, tp.semi4];
-    const finalists = [tp.finalist1, tp.finalist2];
-
-    for (const s of semifinalists) {
-      if (actualSemifinalists.has(s)) {
+    // 27 pts por semifinalista correto (usa nomes PT)
+    for (const s of [tp.semi1, tp.semi2, tp.semi3, tp.semi4]) {
+      if (actualSemifinalistsPT.has(s)) {
         scoresByUser[uid].tournament_pts += 27;
       }
     }
 
+    // Pontuação de placar/ganhador das semifinais (30 pts exato, 16 pts ganhador)
+    // Combinação livre: qualquer par de times correto em qualquer chave conta.
+    const userSemis: { teamA: string; teamB: string; scoreA: number; scoreB: number }[] = [
+      { teamA: tp.semi1, teamB: tp.semi2, scoreA: tp.sf1_score_a, scoreB: tp.sf1_score_b },
+      { teamA: tp.semi3, teamB: tp.semi4, scoreA: tp.sf2_score_a, scoreB: tp.sf2_score_b },
+    ];
+
+    for (const userSemi of userSemis) {
+      for (const actualSemi of actualSemiResults) {
+        // Verifica se os dois times do palpite são os mesmos do jogo real (qualquer ordem)
+        const teamsMatch =
+          (userSemi.teamA === actualSemi.home && userSemi.teamB === actualSemi.away) ||
+          (userSemi.teamA === actualSemi.away && userSemi.teamB === actualSemi.home);
+
+        if (!teamsMatch) continue;
+
+        // Determina placar previsto na orientação do jogo real
+        const predHome = userSemi.teamA === actualSemi.home ? userSemi.scoreA : userSemi.scoreB;
+        const predAway = userSemi.teamA === actualSemi.home ? userSemi.scoreB : userSemi.scoreA;
+
+        const isExact = predHome === actualSemi.homeScore && predAway === actualSemi.awayScore;
+        const actualResult = Math.sign(actualSemi.homeScore - actualSemi.awayScore);
+        const predResult = Math.sign(predHome - predAway);
+
+        if (isExact) {
+          scoresByUser[uid].exact_score_pts += 30;
+        } else if (actualResult === predResult) {
+          scoresByUser[uid].result_pts += 16;
+        }
+        break; // cada palpite de semi só emparelha com uma semi real
+      }
+    }
+
+    // ── Final ─────────────────────────────────────────────────────────────
     if (finalGame && finalGame.home_score !== null && finalGame.away_score !== null) {
-      const actualFinalists = [finalGame.home_team, finalGame.away_team];
-      for (const f of finalists) {
-        if (actualFinalists.includes(f)) {
+      // 40 pts por finalista correto (PT vs PT)
+      for (const f of [tp.finalist1, tp.finalist2]) {
+        if (f === finalHomePT || f === finalAwayPT) {
           scoresByUser[uid].tournament_pts += 40;
         }
       }
 
-      const actualChampion =
-        finalGame.home_score > finalGame.away_score
-          ? finalGame.home_team
-          : finalGame.away_team;
-
-      if (tp.champion === actualChampion) {
+      // 101 pts por campeão correto (PT vs PT)
+      const actualChampionPT =
+        finalGame.home_score > finalGame.away_score ? finalHomePT : finalAwayPT;
+      if (tp.champion === actualChampionPT) {
         scoresByUser[uid].tournament_pts += 101;
       }
 
-      // Placar exato da final (121 pts)
-      // Compara final_score_a/b do tournament_predictions com o resultado real,
-      // respeitando a orientação: finalist1 → home ou away dependendo do jogo real.
+      // 121 pts por placar exato da final — via tournament_predictions
       if (tp.final_score_a !== null && tp.final_score_b !== null) {
-        const f1IsHome = tp.finalist1 === finalGame.home_team;
-        const f1IsAway = tp.finalist1 === finalGame.away_team;
+        const f1IsHome = tp.finalist1 === finalHomePT;
+        const f1IsAway = tp.finalist1 === finalAwayPT;
 
         const isFinalExact =
           (f1IsHome &&
