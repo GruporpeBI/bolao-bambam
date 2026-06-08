@@ -17,6 +17,9 @@ interface GameCardProps {
     scheduled_at: string;
     is_brazil_game: boolean;
     is_final: boolean;
+    home_score?: number | null;
+    away_score?: number | null;
+    ball_possession_home?: number | null;
   };
   existingPrediction?: {
     home_score_pred: number;
@@ -76,6 +79,7 @@ export default function GameCard({
 
   const canPredict = isLoggedIn && !isPastDeadline && !existingPrediction && isPredictionDay;
   const needsTournament = canPredict && !hasTournamentPrediction;
+  const hasResult = game.home_score != null && game.away_score != null;
 
   function handlePredictClick() {
     setExpanded((v) => !v);
@@ -105,7 +109,21 @@ export default function GameCard({
           )}
         </div>
 
-        <span className="text-[#F6C900] font-black text-2xl shrink-0">×</span>
+        {/* Placar ou × */}
+        {hasResult ? (
+          <div className="flex flex-col items-center shrink-0">
+            <span className="text-[#F6C900] font-black text-3xl tabular-nums leading-none">
+              {game.home_score} – {game.away_score}
+            </span>
+            {game.ball_possession_home != null && (
+              <span className="text-[#FAF6EB]/35 text-[10px] mt-0.5 font-normal">
+                {game.ball_possession_home}% posse
+              </span>
+            )}
+          </div>
+        ) : (
+          <span className="text-[#F6C900] font-black text-2xl shrink-0">×</span>
+        )}
 
         {/* Away */}
         <div className="flex items-center justify-start gap-2 flex-1">
@@ -157,7 +175,46 @@ export default function GameCard({
         </p>
       )}
 
-      {(expanded || existingPrediction) && !needsTournament && (
+      {/* Palpite do usuário quando jogo já tem resultado */}
+      {hasResult && existingPrediction && (
+        <div className="mt-3 border-t border-[#F6C900]/10 pt-3">
+          <p className="text-[#FAF6EB]/40 text-xs uppercase tracking-wider mb-1.5">
+            Seu palpite
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-[#FAF6EB]/70 font-semibold text-base tabular-nums">
+              {existingPrediction.home_score_pred} – {existingPrediction.away_score_pred}
+            </span>
+            {existingPrediction.home_score_pred === game.home_score &&
+             existingPrediction.away_score_pred === game.away_score ? (
+              <span className="text-[10px] bg-green-500/20 text-green-400 border border-green-500/30 rounded px-1.5 py-0.5">
+                Placar exato ✓
+              </span>
+            ) : (
+              (() => {
+                const realHomePts = game.home_score ?? 0;
+                const realAwayPts = game.away_score ?? 0;
+                const predHomePts = existingPrediction.home_score_pred;
+                const predAwayPts = existingPrediction.away_score_pred;
+                const correctWinner =
+                  Math.sign(predHomePts - predAwayPts) === Math.sign(realHomePts - realAwayPts);
+                return correctWinner ? (
+                  <span className="text-[10px] bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded px-1.5 py-0.5">
+                    Resultado certo ✓
+                  </span>
+                ) : (
+                  <span className="text-[10px] bg-zinc-800 text-zinc-500 border border-zinc-700 rounded px-1.5 py-0.5">
+                    Não acertou
+                  </span>
+                );
+              })()
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Formulário de palpite (jogos futuros) */}
+      {(expanded || (existingPrediction && !hasResult)) && !needsTournament && (
         <PredictionForm
           gameId={game.id}
           homeTeam={homeTeam}
