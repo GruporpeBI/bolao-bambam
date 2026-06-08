@@ -7,6 +7,7 @@ import GameRow from "./GameRow";
 import ResultModal from "./ResultModal";
 import { recalculateScores, checkInUser } from "./actions";
 import LocationConfig from "./LocationConfig";
+import { AutoSyncButton } from "./AutoSyncButton";
 
 interface Game {
   id: string;
@@ -23,6 +24,9 @@ interface Game {
   home_score: number | null;
   away_score: number | null;
   ball_possession_home: number | null;
+  api_football_fixture_id?: string | null;
+  espn_event_id?:           string | null;
+  espn_league?:             string | null;
 }
 
 interface UserRow {
@@ -158,17 +162,18 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
               Nenhum jogo habilitado ainda.
             </p>
           ) : (
-            <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {enabledGames.map((game) => (
                 <div
                   key={game.id}
-                  className="flex flex-wrap items-center justify-between gap-4 border border-[#F6C900]/20 rounded-sm px-5 py-4"
+                  className="flex flex-col gap-3 border border-[#F6C900]/20 rounded px-4 py-4 bg-[#1A1A1A]"
                 >
-                  <div>
-                    <p className="text-[#FAF6EB] font-medium text-sm">
+                  {/* Header: match name + date */}
+                  <div className="text-center">
+                    <p className="text-[#FAF6EB] font-semibold text-sm leading-tight">
                       {game.home_team} × {game.away_team}
                     </p>
-                    <p className="text-[#FAF6EB]/40 text-xs mt-0.5">
+                    <p className="text-[#FAF6EB]/40 text-xs mt-1">
                       {new Date(game.scheduled_at).toLocaleDateString("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
@@ -177,19 +182,34 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
                       })}
                     </p>
                   </div>
-                  <div className="flex items-center gap-4">
+
+                  {/* Current score */}
+                  <div className="text-center">
                     {game.home_score !== null && game.away_score !== null ? (
-                      <span className="text-[#F6C900] font-bold">
-                        {game.home_score} – {game.away_score}
+                      <>
+                        <span className="text-[#F6C900] font-bold text-2xl">
+                          {game.home_score} – {game.away_score}
+                        </span>
                         {game.ball_possession_home !== null && (
-                          <span className="text-[#FAF6EB]/40 font-normal text-xs ml-2">
-                            ({game.ball_possession_home}% posse)
-                          </span>
+                          <p className="text-[#FAF6EB]/40 text-xs mt-0.5">
+                            {game.ball_possession_home}% posse
+                          </p>
                         )}
-                      </span>
+                      </>
                     ) : (
-                      <span className="text-[#FAF6EB]/30 text-xs">Sem resultado</span>
+                      <span className="text-[#FAF6EB]/25 text-sm">Sem resultado</span>
                     )}
+                  </div>
+
+                  {/* Auto sync button — centered, full width */}
+                  <AutoSyncButton
+                    gameId={game.id}
+                    hasEspnId={!!game.espn_event_id}
+                    hasAfId={!!game.api_football_fixture_id}
+                  />
+
+                  {/* Manual edit — secondary action */}
+                  <div className="flex justify-center">
                     <ResultModal game={game} />
                   </div>
                 </div>

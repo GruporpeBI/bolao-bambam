@@ -19,6 +19,7 @@ import {
   SofascoreEvent,
   stageFromSofascore,
 } from "../_shared/sofascore.ts";
+import { enrichGameIds } from "../_shared/enrich-ids.ts";
 
 // ---------------------------------------------------------------------------
 // CORS
@@ -257,20 +258,39 @@ Deno.serve(async (req: Request) => {
     }
   }
 
+  // After syncing games from Sofascore, automatically enrich external IDs
+  // (thesportsdb_event_id, espn_event_id, api_football_fixture_id) for any
+  // game that is still missing them. Runs silently — never blocks the sync.
+  const enrichResult = await enrichGameIds(supabase).catch((err) => {
+    console.warn("[sync-agenda] enrich-ids failed (non-fatal):", err);
+    return { scanned: 0, updated: 0, errors: [String(err)] };
+  });
+
+  console.log(
+    `[sync-agenda] enrich-ids: scanned=${enrichResult.scanned} updated=${enrichResult.updated}`
+  );
+
   const finalStatus = errors.length === 0 ? "success" : "error";
   const message =
     errors.length === 0
-      ? `Completed: ${synced} synced, ${skipped} skipped`
-      : `Completed with ${errors.length} error(s): ${synced} synced, ${skipped} skipped`;
+      ? `Completed: ${synced} synced, ${skipped} skipped, ids_enriched=${enrichResult.updated}`
+      : `Completed with ${errors.length} error(s): ${synced} synced, ${skipped} skipped, ids_enriched=${enrichResult.updated}`;
 
   await logRun(supabase, finalStatus, message, {
     synced,
     skipped,
     errors: errors.slice(0, 50),
+    enrich: enrichResult,
   });
 
   return new Response(
-    JSON.stringify({ ok: true, synced, skipped, errors: errors.slice(0, 10) }),
+    JSON.stringify({
+      ok: true,
+      synced,
+      skipped,
+      ids_enriched: enrichResult.updated,
+      errors: errors.slice(0, 10),
+    }),
     {
       status: 200,
       headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
