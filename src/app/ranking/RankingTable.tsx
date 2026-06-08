@@ -160,15 +160,6 @@ export default function RankingTable({ initialData, gameRankings }: RankingTable
                   }`}>
                     {row.total_pts} pts
                   </span>
-                  <div className="flex flex-wrap gap-1 justify-center text-xs text-[#FAF6EB]/50">
-                    <span>{row.attendance_pts} pres</span>
-                    <span>·</span>
-                    <span>{row.result_pts} gan</span>
-                    <span>·</span>
-                    <span>{row.exact_score_pts} placar</span>
-                    <span>·</span>
-                    <span>{row.tournament_pts} torn</span>
-                  </div>
                 </div>
               ))}
             </div>
@@ -180,11 +171,7 @@ export default function RankingTable({ initialData, gameRankings }: RankingTable
                 <tr className="border-b border-[#F6C900]/20 text-[#FAF6EB]/50 text-xs uppercase tracking-wider">
                   <th className="py-3 text-left w-10">#</th>
                   <th className="py-3 text-left">Participante</th>
-                  <th className="py-3 text-right">Total</th>
-                  <th className="py-3 text-right hidden sm:table-cell">Pres.</th>
-                  <th className="py-3 text-right hidden sm:table-cell">Ganhador</th>
-                  <th className="py-3 text-right hidden sm:table-cell">Placar</th>
-                  <th className="py-3 text-right hidden md:table-cell">Torneio</th>
+                  <th className="py-3 text-right">Pontos</th>
                 </tr>
               </thead>
               <tbody>
@@ -205,11 +192,7 @@ export default function RankingTable({ initialData, gameRankings }: RankingTable
                         )}
                       </td>
                       <td className="py-3.5 text-[#FAF6EB] font-medium">{maskName(row.user_name)}</td>
-                      <td className="py-3.5 text-right text-[#F6C900] font-bold">{row.total_pts}</td>
-                      <td className="py-3.5 text-right text-[#FAF6EB]/60 hidden sm:table-cell">{row.attendance_pts}</td>
-                      <td className="py-3.5 text-right text-[#FAF6EB]/60 hidden sm:table-cell">{row.result_pts}</td>
-                      <td className="py-3.5 text-right text-[#FAF6EB]/60 hidden sm:table-cell">{row.exact_score_pts}</td>
-                      <td className="py-3.5 text-right text-[#FAF6EB]/60 hidden md:table-cell">{row.tournament_pts}</td>
+                      <td className="py-3.5 text-right text-[#F6C900] font-bold text-base">{row.total_pts}</td>
                     </tr>
                   );
                 })}
