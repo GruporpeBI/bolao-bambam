@@ -190,11 +190,16 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
                         <span className="text-[#F6C900] font-bold text-2xl">
                           {game.home_score} – {game.away_score}
                         </span>
-                        {game.ball_possession_home !== null && (
-                          <p className="text-[#FAF6EB]/40 text-xs mt-0.5">
-                            {game.ball_possession_home}% posse
-                          </p>
-                        )}
+                        {game.ball_possession_home !== null && (() => {
+                          const hp = game.ball_possession_home!;
+                          const team = hp > 50 ? game.home_team : hp < 50 ? game.away_team : null;
+                          const pct  = hp > 50 ? hp : 100 - hp;
+                          return team ? (
+                            <p className="text-[#FAF6EB]/40 text-xs mt-0.5">
+                              {team} {pct}% posse
+                            </p>
+                          ) : null;
+                        })()}
                       </>
                     ) : (
                       <span className="text-[#FAF6EB]/25 text-sm">Sem resultado</span>

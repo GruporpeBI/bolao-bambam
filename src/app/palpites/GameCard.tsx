@@ -81,6 +81,16 @@ export default function GameCard({
   const needsTournament = canPredict && !hasTournamentPrediction;
   const hasResult = game.home_score != null && game.away_score != null;
 
+  // Retorna o time com > 50% de posse e o valor, ou null se <= 50 (empate técnico)
+  function dominantPossession(): { team: string; pct: number } | null {
+    const hp = game.ball_possession_home;
+    if (hp == null) return null;
+    if (hp > 50) return { team: teamName(game.home_team), pct: hp };
+    if (hp < 50) return { team: teamName(game.away_team), pct: 100 - hp };
+    return null; // exatamente 50/50
+  }
+  const poss = dominantPossession();
+
   function handlePredictClick() {
     setExpanded((v) => !v);
   }
@@ -115,9 +125,9 @@ export default function GameCard({
             <span className="text-[#F6C900] font-black text-3xl tabular-nums leading-none">
               {game.home_score} – {game.away_score}
             </span>
-            {game.ball_possession_home != null && (
+            {poss && (
               <span className="text-[#FAF6EB]/35 text-[10px] mt-0.5 font-normal">
-                {game.ball_possession_home}% posse
+                {poss.team} {poss.pct}% posse
               </span>
             )}
           </div>
