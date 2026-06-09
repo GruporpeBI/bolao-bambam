@@ -15,6 +15,7 @@ interface ScoreRow {
   tournament_pts: number;
   total_pts: number;
   updated_at: string;
+  poss_proximity: number; // soma de |possession_pred - ball_possession_home| — menor = melhor
 }
 
 interface GameRankingEntry {
@@ -23,6 +24,8 @@ interface GameRankingEntry {
   home_pred: number;
   away_pred: number;
   pts: number;
+  poss_proximity: number; // |possession_pred - ball_possession_home| para este jogo
+  attendance_pts: number;
 }
 
 interface GameRanking {
@@ -63,12 +66,40 @@ export default async function RankingPage() {
     type UserBasic = { id: string; name: string };
     type ScoreBasic = { user_id: string; attendance_pts: number; result_pts: number; exact_score_pts: number; tournament_pts: number; total_pts: number; updated_at: string };
 
-    const [{ data: allUsersRaw }, { data: scoresRaw }] = await Promise.all([
+    // Fetch users, scores, and all games with possession results in parallel
+    type GamePoss = { id: string; ball_possession_home: number };
+    type PossPred = { user_id: string; game_id: string; possession_pred: number };
+
+    const [
+      { data: allUsersRaw },
+      { data: scoresRaw },
+      { data: gamesWithPossRaw },
+    ] = await Promise.all([
       supabase.from("users").select("id, name"),
       supabase.from("scores").select("user_id, attendance_pts, result_pts, exact_score_pts, tournament_pts, total_pts, updated_at"),
+      supabase.from("games").select("id, ball_possession_home").eq("is_enabled", true as unknown as string).not("ball_possession_home", "is", null),
     ]);
     const allUsers = (allUsersRaw as UserBasic[] | null);
     const scoresData = (scoresRaw as ScoreBasic[] | null);
+    const gamesWithPoss = (gamesWithPossRaw as GamePoss[] | null) ?? [];
+
+    // Compute possession proximity sum per user across all finished games
+    const possProximityMap = new Map<string, number>();
+    if (gamesWithPoss.length > 0) {
+      const { data: allPossPredsRaw } = await supabase
+        .from("predictions")
+        .select("user_id, game_id, possession_pred")
+        .in("game_id", gamesWithPoss.map((g) => g.id));
+
+      const gamePossMap = new Map(gamesWithPoss.map((g) => [g.id, g.ball_possession_home]));
+
+      for (const pred of (allPossPredsRaw as PossPred[] | null) ?? []) {
+        const actual = gamePossMap.get(pred.game_id);
+        if (actual == null || pred.possession_pred == null) continue;
+        const diff = Math.abs(pred.possession_pred - actual);
+        possProximityMap.set(pred.user_id, (possProximityMap.get(pred.user_id) ?? 0) + diff);
+      }
+    }
 
     const scoreMap = new Map((scoresData ?? []).map((s) => [s.user_id, s]));
 
@@ -84,9 +115,17 @@ export default async function RankingPage() {
           tournament_pts: s?.tournament_pts ?? 0,
           total_pts: s?.total_pts ?? 0,
           updated_at: s?.updated_at ?? "",
+          // 9999 para usuários sem palpites (não penaliza quem não participou ainda)
+          poss_proximity: possProximityMap.get(u.id) ?? 9999,
         };
       })
-      .sort((a, b) => b.total_pts - a.total_pts)
+      .sort((a, b) => {
+        if (b.total_pts !== a.total_pts)         return b.total_pts - a.total_pts;
+        if (a.poss_proximity !== b.poss_proximity) return a.poss_proximity - b.poss_proximity;
+        if (b.attendance_pts !== a.attendance_pts) return b.attendance_pts - a.attendance_pts;
+        if (b.exact_score_pts !== a.exact_score_pts) return b.exact_score_pts - a.exact_score_pts;
+        return b.result_pts - a.result_pts;
+      })
       .slice(0, 10);
 
     // ── Jogos ao vivo (com placar atual do Sofascore) ──
@@ -103,12 +142,12 @@ export default async function RankingPage() {
     const todayBr = nowBrasilia.toISOString().slice(0, 10);
     const yesterdayBr = new Date(nowBrasilia.getTime() - 86400000).toISOString().slice(0, 10);
 
-    type GameVisible = { id: string; home_team: string; away_team: string; home_score: number | null; away_score: number | null; is_final: boolean; scheduled_at: string };
+    type GameVisible = { id: string; home_team: string; away_team: string; home_score: number | null; away_score: number | null; ball_possession_home: number | null; is_final: boolean; scheduled_at: string };
 
     // Todos os jogos habilitados — sem filtro de resultado
     const { data: allEnabledGamesRaw } = await supabase
       .from("games")
-      .select("id, home_team, away_team, home_score, away_score, is_final, scheduled_at")
+      .select("id, home_team, away_team, home_score, away_score, ball_possession_home, is_final, scheduled_at")
       .eq("is_enabled", true as unknown as string);
 
     const allEnabledGames = (allEnabledGamesRaw as GameVisible[] | null) ?? [];
@@ -122,38 +161,53 @@ export default async function RankingPage() {
 
     if (visibleGames && visibleGames.length > 0) {
       for (const game of visibleGames) {
-        type PredBasic = { user_id: string; home_score_pred: number; away_score_pred: number };
+        type PredBasic = { user_id: string; home_score_pred: number; away_score_pred: number; possession_pred: number | null };
         const { data: predsRaw } = await supabase
           .from("predictions")
-          .select("user_id, home_score_pred, away_score_pred")
+          .select("user_id, home_score_pred, away_score_pred, possession_pred")
           .eq("game_id", game.id);
         const preds = predsRaw as PredBasic[] | null;
 
         const userIds = (preds ?? []).map((p) => p.user_id);
         let userNameMap = new Map<string, string>();
+        let attendanceMap = new Map<string, number>();
 
         if (userIds.length > 0) {
-          const { data: usersForGameRaw } = await supabase
-            .from("users")
-            .select("id, name")
-            .in("id", userIds);
+          const [{ data: usersForGameRaw }, { data: scoresForGameRaw }] = await Promise.all([
+            supabase.from("users").select("id, name").in("id", userIds),
+            supabase.from("scores").select("user_id, attendance_pts").in("user_id", userIds),
+          ]);
           userNameMap = new Map((usersForGameRaw as UserBasic[] | null ?? []).map((u) => [u.id, u.name]));
+          attendanceMap = new Map((scoresForGameRaw as { user_id: string; attendance_pts: number }[] | null ?? []).map((s) => [s.user_id, s.attendance_pts]));
         }
 
         const hasResult = game.home_score !== null && game.away_score !== null;
+        const actualPoss = game.ball_possession_home ?? null;
 
         const entries: GameRankingEntry[] = (preds ?? [])
-          .map((p) => ({
-            user_id: p.user_id,
-            user_name: userNameMap.get(p.user_id) ?? "Participante",
-            home_pred: p.home_score_pred,
-            away_pred: p.away_score_pred,
-            // 0 pts enquanto não há resultado; pts reais após resultado
-            pts: hasResult
+          .map((p) => {
+            const pts = hasResult
               ? gamePts(p.home_score_pred, p.away_score_pred, game.home_score!, game.away_score!, game.is_final)
-              : 0,
-          }))
-          .sort((a, b) => b.pts - a.pts);
+              : 0;
+            // Proximidade de posse: |pred - actual| — 9999 se sem dado
+            const possProximity = (actualPoss != null && p.possession_pred != null)
+              ? Math.abs(p.possession_pred - actualPoss)
+              : 9999;
+            return {
+              user_id:       p.user_id,
+              user_name:     userNameMap.get(p.user_id) ?? "Participante",
+              home_pred:     p.home_score_pred,
+              away_pred:     p.away_score_pred,
+              pts,
+              poss_proximity: possProximity,
+              attendance_pts: attendanceMap.get(p.user_id) ?? 0,
+            };
+          })
+          .sort((a, b) => {
+            if (b.pts !== a.pts)                   return b.pts - a.pts;
+            if (a.poss_proximity !== b.poss_proximity) return a.poss_proximity - b.poss_proximity;
+            return b.attendance_pts - a.attendance_pts;
+          });
 
         gameRankings.push({
           gameId: game.id,

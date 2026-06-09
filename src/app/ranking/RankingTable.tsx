@@ -14,6 +14,7 @@ interface ScoreRow {
   tournament_pts: number;
   total_pts: number;
   updated_at: string;
+  poss_proximity: number;
 }
 
 interface GameRankingEntry {
@@ -22,6 +23,8 @@ interface GameRankingEntry {
   home_pred: number;
   away_pred: number;
   pts: number;
+  poss_proximity: number;
+  attendance_pts: number;
 }
 
 interface GameRanking {
@@ -80,20 +83,31 @@ export default function RankingTable({ initialData, gameRankings }: RankingTable
         { event: "*", schema: "public", table: "scores" },
         (payload) => {
           setData((prev) => {
+            const sortAll = (rows: ScoreRow[]) =>
+              rows
+                .sort((a, b) => {
+                  if (b.total_pts !== a.total_pts)           return b.total_pts - a.total_pts;
+                  if (a.poss_proximity !== b.poss_proximity) return a.poss_proximity - b.poss_proximity;
+                  if (b.attendance_pts !== a.attendance_pts) return b.attendance_pts - a.attendance_pts;
+                  if (b.exact_score_pts !== a.exact_score_pts) return b.exact_score_pts - a.exact_score_pts;
+                  return b.result_pts - a.result_pts;
+                })
+                .slice(0, 10);
+
             if (payload.eventType === "INSERT") {
-              return [...prev, payload.new as ScoreRow].sort(
-                (a, b) => b.total_pts - a.total_pts
-              ).slice(0, 10);
+              // New user: poss_proximity unknown from Realtime — default high value
+              const newRow = { ...(payload.new as ScoreRow), poss_proximity: 9999 };
+              return sortAll([...prev, newRow]);
             }
             if (payload.eventType === "UPDATE") {
-              return prev
-                .map((row) =>
+              return sortAll(
+                prev.map((row) =>
                   row.user_id === (payload.new as ScoreRow).user_id
-                    ? { ...row, ...(payload.new as ScoreRow) }
+                    // Preserve poss_proximity from state — it doesn't change mid-game
+                    ? { ...row, ...(payload.new as ScoreRow), poss_proximity: row.poss_proximity }
                     : row
                 )
-                .sort((a, b) => b.total_pts - a.total_pts)
-                .slice(0, 10);
+              );
             }
             return prev;
           });
