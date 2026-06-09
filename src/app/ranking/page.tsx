@@ -132,12 +132,12 @@ export default async function RankingPage() {
         };
       })
       .sort((a, b) => {
-        if (b.total_pts !== a.total_pts)                 return b.total_pts - a.total_pts;
-        if (b.poss_team_correct !== a.poss_team_correct) return b.poss_team_correct - a.poss_team_correct;
-        if (a.poss_proximity !== b.poss_proximity)       return a.poss_proximity - b.poss_proximity;
-        if (b.attendance_pts !== a.attendance_pts)       return b.attendance_pts - a.attendance_pts;
-        if (b.exact_score_pts !== a.exact_score_pts)     return b.exact_score_pts - a.exact_score_pts;
-        return b.result_pts - a.result_pts;
+        if (b.total_pts !== a.total_pts)                 return b.total_pts - a.total_pts;           // 1. pontos totais
+        if (a.poss_proximity !== b.poss_proximity)       return a.poss_proximity - b.poss_proximity; // 2. mais perto do % exato
+        if (b.attendance_pts !== a.attendance_pts)       return b.attendance_pts - a.attendance_pts; // 3. mais presenças
+        if (b.exact_score_pts !== a.exact_score_pts)     return b.exact_score_pts - a.exact_score_pts; // 4. mais placares exatos
+        if (b.result_pts !== a.result_pts)               return b.result_pts - a.result_pts;         // 5. mais acertos de ganhador
+        return b.poss_team_correct - a.poss_team_correct; // 6. mais acertos do time dominante (final)
       })
       .slice(0, 10);
 
