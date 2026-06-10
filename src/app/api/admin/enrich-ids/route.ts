@@ -89,16 +89,21 @@ function datesMatch(d1: string, d2: string): boolean {
 
 interface EspnEvent {
   id: string;
-  competitions: Array<{
+  name?: string;           // "Nigeria at Portugal"
+  shortName?: string;      // "NGA @ POR"
+  date?: string;           // "2026-06-10T19:45Z"
+  competitions?: Array<{
     date: string;
     competitors: Array<{ homeAway: string; team: { displayName: string } }>;
   }>;
 }
 
 async function loadEspnEvents(): Promise<EspnEvent[]> {
-  // WC 2026: June 11 – July 19, 2026
+  // Usa /sports/soccer/all/scoreboard para pegar TODOS os jogos
+  // Isso permite encontrar jogos de amistosos, Copa do Mundo, qualificatórias, etc.
+  // Data range: 11 de junho a 19 de julho de 2026
   const url =
-    "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?limit=200&dates=20260611-20260719";
+    "https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?limit=200&dates=20260611-20260719";
   try {
     const res = await fetch(url);
     if (!res.ok) {
@@ -178,15 +183,28 @@ async function loadTdbEvents(): Promise<TdbEvent[]> {
 
 function findEspnEvent(game: GameRow, events: EspnEvent[]): EspnEvent | undefined {
   return events.find((e) => {
-    const comp = e.competitions?.[0];
-    if (!comp) return false;
-    if (!datesMatch(game.scheduled_at, comp.date)) return false;
-    const home = comp.competitors?.find((c) => c.homeAway === "home")?.team.displayName ?? "";
-    const away = comp.competitors?.find((c) => c.homeAway === "away")?.team.displayName ?? "";
-    return (
-      (teamsMatch(game.home_team, home) && teamsMatch(game.away_team, away)) ||
-      (teamsMatch(game.home_team, away) && teamsMatch(game.away_team, home))
-    );
+    // Estratégia 1: Matching por name/shortName (mais rápido e confiável)
+    const name = e.name?.toLowerCase() ?? "";
+    const shortName = e.shortName?.toLowerCase() ?? "";
+
+    const homeTeamLower = game.home_team.toLowerCase();
+    const awayTeamLower = game.away_team.toLowerCase();
+
+    const nameMatches =
+      (name.includes(homeTeamLower) && name.includes(awayTeamLower)) ||
+      (name.includes(awayTeamLower) && name.includes(homeTeamLower));
+
+    const shortNameMatches =
+      shortName.includes(homeTeamLower.substring(0, 3)) ||
+      shortName.includes(awayTeamLower.substring(0, 3));
+
+    if (!nameMatches && !shortNameMatches) return false;
+
+    // Validar data
+    const eventDate = e.date || e.competitions?.[0]?.date;
+    if (!eventDate || !datesMatch(game.scheduled_at, eventDate)) return false;
+
+    return true;
   });
 }
 
