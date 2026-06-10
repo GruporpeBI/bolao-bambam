@@ -178,9 +178,10 @@ async function loadTdbEvents(): Promise<TdbEvent[]> {
       return [];
     }
     const dataFallback = await resFallback.json() as { events: TdbEvent[] | null };
-    if (dataFallback.events?.length > 0) {
-      console.log(`[enrich-ids] TDB eventsnextleague loaded: ${dataFallback.events.length} events`);
-      return dataFallback.events;
+    const eventsFallback = dataFallback.events ?? [];
+    if (eventsFallback.length > 0) {
+      console.log(`[enrich-ids] TDB eventsnextleague loaded: ${eventsFallback.length} events`);
+      return eventsFallback;
     }
     return [];
   } catch (err) {
