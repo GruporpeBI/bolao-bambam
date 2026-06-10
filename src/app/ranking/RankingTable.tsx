@@ -28,6 +28,7 @@ interface GameRankingEntry {
   poss_proximity: number;
   attendance_pts: number;
   checkedIn: boolean;
+  possessionPred: number | null;
 }
 
 interface GameRanking {
@@ -36,6 +37,8 @@ interface GameRanking {
   scheduledAt: string;
   home_score: number | null;
   away_score: number | null;
+  homeTeam: string;
+  awayTeam: string;
   entries: GameRankingEntry[];
 }
 
@@ -62,6 +65,14 @@ function ptsLabel(pts: number): string {
   if (pts === 16) return "Acertou Ganhador";
   if (pts === 0) return "Errou";
   return `${pts} pts`;
+}
+
+// Palpite de posse de bola → mostra o time majoritário + % (padrão do app)
+function possessionLabel(pred: number | null, homeTeam: string, awayTeam: string): string {
+  if (pred == null) return "—";
+  if (pred > 50) return `${homeTeam} ${pred}%`;
+  if (pred < 50) return `${awayTeam} ${100 - pred}%`;
+  return "50%";
 }
 
 export default function RankingTable({ initialData, gameRankings }: RankingTableProps) {
@@ -271,6 +282,7 @@ export default function RankingTable({ initialData, gameRankings }: RankingTable
                       <th className="py-3 text-left w-10">#</th>
                       <th className="py-3 text-left">Participante</th>
                       <th className="py-3 text-center">Palpite</th>
+                      <th className="py-3 text-center">Posse de Bola</th>
                       <th className="py-3 text-center">Check-in</th>
                       <th className="py-3 text-right">Pontos</th>
                     </tr>
@@ -293,6 +305,9 @@ export default function RankingTable({ initialData, gameRankings }: RankingTable
                         <td className="py-3.5 text-[#FAF6EB] font-medium">{maskName(entry.user_name)}</td>
                         <td className="py-3.5 text-center font-bold text-[#FAF6EB]/80">
                           {entry.home_pred} × {entry.away_pred}
+                        </td>
+                        <td className="py-3.5 text-center text-[#FAF6EB]/70 text-xs">
+                          {possessionLabel(entry.possessionPred, currentGameRanking.homeTeam, currentGameRanking.awayTeam)}
                         </td>
                         <td className="py-3.5 text-center">
                           {entry.checkedIn ? (

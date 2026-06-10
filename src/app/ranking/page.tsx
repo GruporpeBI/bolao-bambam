@@ -29,6 +29,7 @@ interface GameRankingEntry {
   poss_proximity: number;    // |possession_pred - ball_possession_home| para este jogo
   attendance_pts: number;
   checkedIn: boolean;        // fez check-in (presença) neste jogo
+  possessionPred: number | null; // palpite de posse de bola do mandante (%)
 }
 
 interface GameRanking {
@@ -37,6 +38,8 @@ interface GameRanking {
   scheduledAt: string;
   home_score: number | null;
   away_score: number | null;
+  homeTeam: string;
+  awayTeam: string;
   entries: GameRankingEntry[];
 }
 
@@ -233,6 +236,7 @@ export default async function RankingPage() {
               poss_proximity:    possProximity,
               attendance_pts:    attendanceMap.get(p.user_id) ?? 0,
               checkedIn:         checkedInSet.has(p.user_id),
+              possessionPred:    p.possession_pred,
             };
           })
           .sort((a, b) => {
@@ -248,6 +252,8 @@ export default async function RankingPage() {
           scheduledAt: game.scheduled_at,
           home_score: game.home_score,
           away_score: game.away_score,
+          homeTeam: teamName(game.home_team),
+          awayTeam: teamName(game.away_team),
           entries,
         });
       }
