@@ -99,6 +99,13 @@ export default async function PalpitesPage() {
 
   const hasTournamentPrediction = !!tournamentPrediction;
 
+  // Conta jogos da Copa Brasil finalizados (espn_league = fifa.world com resultado)
+  const tournamentDeadlinePassed = allEnabled.filter(
+    (g) => g.is_brazil_game &&
+           g.home_score != null &&
+           (g as { espn_league?: string | null }).espn_league === "fifa.world"
+  ).length >= 3;
+
   return (
     <main className="min-h-screen bg-[#1A1A1A]">
       <div className="max-w-3xl mx-auto px-4 py-10">
@@ -135,6 +142,7 @@ export default async function PalpitesPage() {
           <TournamentPredictions
             disabled={!dbUserId}
             existing={tournamentPrediction}
+            tournamentDeadlinePassed={tournamentDeadlinePassed}
           />
         </div>
 
@@ -157,6 +165,7 @@ export default async function PalpitesPage() {
                   game={game}
                   existingPrediction={predictions[game.id] ?? null}
                   hasTournamentPrediction={hasTournamentPrediction}
+                  tournamentDeadlinePassed={tournamentDeadlinePassed}
                   isLoggedIn={!!dbUserId}
                   isPredictionDay={isPredictionDay}
                   alreadyCheckedIn={isThisGameCheckedIn}

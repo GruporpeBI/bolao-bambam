@@ -70,6 +70,7 @@ interface Existing {
 interface TournamentPredictionsProps {
   disabled: boolean;
   existing?: Existing | null;
+  tournamentDeadlinePassed?: boolean;
 }
 
 function deriveWinner(teamA: string, teamB: string, scoreA: number, scoreB: number, tiebreak: string): string {
@@ -134,7 +135,16 @@ function WinnerBadge({ team, isDraw }: { team: string; isDraw: boolean }) {
   );
 }
 
-export default function TournamentPredictions({ disabled, existing }: TournamentPredictionsProps) {
+export default function TournamentPredictions({ disabled, existing, tournamentDeadlinePassed }: TournamentPredictionsProps) {
+  // Prazo encerrado: se 3+ jogos Copa Brasil finalizados e usuário não preencheu
+  if (tournamentDeadlinePassed && !existing) {
+    return (
+      <div className="border border-[#F6C900]/10 rounded-sm px-5 py-4 text-[#FAF6EB]/40 text-sm">
+        Palpites do torneio não estão mais disponíveis — prazo encerrado após os 3 primeiros jogos do Brasil.
+      </div>
+    );
+  }
+
   // Bloqueado apenas se já enviou ou se não está logado
   const lock = disabled || !!existing;
 

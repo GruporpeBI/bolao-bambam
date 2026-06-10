@@ -27,6 +27,7 @@ interface GameCardProps {
     possession_pred: number;
   } | null;
   hasTournamentPrediction: boolean;
+  tournamentDeadlinePassed: boolean;
   isLoggedIn: boolean;
   isPredictionDay: boolean;
   alreadyCheckedIn: boolean;
@@ -48,6 +49,7 @@ export default function GameCard({
   game,
   existingPrediction,
   hasTournamentPrediction,
+  tournamentDeadlinePassed,
   isLoggedIn,
   isPredictionDay,
   alreadyCheckedIn,
@@ -78,7 +80,7 @@ export default function GameCard({
   });
 
   const canPredict = isLoggedIn && !isPastDeadline && !existingPrediction && isPredictionDay;
-  const needsTournament = canPredict && !hasTournamentPrediction;
+  const needsTournament = canPredict && !hasTournamentPrediction && !tournamentDeadlinePassed;
   const hasResult = game.home_score != null && game.away_score != null;
 
   // Retorna o time com > 50% de posse e o valor, ou null se <= 50 (empate técnico)
