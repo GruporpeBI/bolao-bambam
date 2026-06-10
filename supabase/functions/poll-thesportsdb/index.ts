@@ -101,7 +101,26 @@ Deno.serve(async (req: Request) => {
   const supabase = getSupabase();
 
   // 1. Encontra jogo ativo com ID da TheSportsDB
-  const game = await findActiveGame(supabase);
+  // Prioriza game_id do body (enviado por poll-game-start)
+  let game;
+  try {
+    const body = await req.json().catch(() => ({}));
+    const gameId = body.game_id;
+
+    if (gameId) {
+      const { data } = await supabase
+        .from("games")
+        .select("id, home_team, away_team, sofascore_id, thesportsdb_event_id, espn_event_id, espn_league")
+        .eq("id", gameId)
+        .maybeSingle();
+      game = data;
+    } else {
+      game = await findActiveGame(supabase);
+    }
+  } catch {
+    game = await findActiveGame(supabase);
+  }
+
   if (!game?.thesportsdb_event_id) {
     return new Response(
       JSON.stringify({ ok: true, message: "no active game with thesportsdb_event_id" }),
