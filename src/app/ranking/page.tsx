@@ -28,6 +28,7 @@ interface GameRankingEntry {
   poss_team_correct: number; // 1 se acertou o time dominante, 0 se não
   poss_proximity: number;    // |possession_pred - ball_possession_home| para este jogo
   attendance_pts: number;
+  checkedIn: boolean;        // fez check-in (presença) neste jogo
 }
 
 interface GameRanking {
@@ -183,6 +184,16 @@ export default async function RankingPage() {
         const userIds = (preds ?? []).map((p) => p.user_id);
         let userNameMap = new Map<string, string>();
         let attendanceMap = new Map<string, number>();
+        const checkedInSet = new Set<string>();
+
+        // Presenças (check-in) deste jogo — independe de ter palpite
+        const { data: attsForGameRaw } = await supabase
+          .from("attendances")
+          .select("user_id")
+          .eq("game_id", game.id);
+        for (const a of (attsForGameRaw as { user_id: string }[] | null ?? [])) {
+          checkedInSet.add(a.user_id);
+        }
 
         if (userIds.length > 0) {
           const [{ data: usersForGameRaw }, { data: scoresForGameRaw }] = await Promise.all([
@@ -221,6 +232,7 @@ export default async function RankingPage() {
               poss_team_correct: possTeamCorrect,
               poss_proximity:    possProximity,
               attendance_pts:    attendanceMap.get(p.user_id) ?? 0,
+              checkedIn:         checkedInSet.has(p.user_id),
             };
           })
           .sort((a, b) => {

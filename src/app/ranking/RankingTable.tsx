@@ -27,6 +27,7 @@ interface GameRankingEntry {
   poss_team_correct: number;
   poss_proximity: number;
   attendance_pts: number;
+  checkedIn: boolean;
 }
 
 interface GameRanking {
@@ -270,6 +271,7 @@ export default function RankingTable({ initialData, gameRankings }: RankingTable
                       <th className="py-3 text-left w-10">#</th>
                       <th className="py-3 text-left">Participante</th>
                       <th className="py-3 text-center">Palpite</th>
+                      <th className="py-3 text-center">Check-in</th>
                       <th className="py-3 text-right">Pontos</th>
                     </tr>
                   </thead>
@@ -291,6 +293,13 @@ export default function RankingTable({ initialData, gameRankings }: RankingTable
                         <td className="py-3.5 text-[#FAF6EB] font-medium">{maskName(entry.user_name)}</td>
                         <td className="py-3.5 text-center font-bold text-[#FAF6EB]/80">
                           {entry.home_pred} × {entry.away_pred}
+                        </td>
+                        <td className="py-3.5 text-center">
+                          {entry.checkedIn ? (
+                            <span className="text-green-400 font-bold text-xs uppercase">Sim</span>
+                          ) : (
+                            <span className="text-[#FAF6EB]/30 font-bold text-xs uppercase">Não</span>
+                          )}
                         </td>
                         <td className="py-3.5 text-right">
                           {currentGameRanking.home_score === null ? (
