@@ -100,13 +100,15 @@ export async function submitTournamentPredictions(
 
   const { data: brazilGamesData } = await supabase
     .from("games")
-    .select("id, scheduled_at, home_score, away_score")
+    .select("id, home_score, away_score")
     .eq("is_brazil_game", true as unknown as string)
+    .eq("is_enabled", true as unknown as string)
+    .eq("espn_league", "fifa.world")
     .order("scheduled_at", { ascending: true });
 
-  const brazilGames = (brazilGamesData as Pick<GameRow, "id" | "scheduled_at" | "home_score" | "away_score">[] | null) ?? [];
+  const brazilGames = (brazilGamesData as Pick<GameRow, "id" | "home_score" | "away_score">[] | null) ?? [];
 
-  // Conta apenas jogos que já foram FINALIZADOS (têm resultado)
+  // Conta apenas jogos da Copa 2026 que já foram FINALIZADOS (têm resultado)
   const finishedBrazilGames = brazilGames.filter(
     (g) => g.home_score != null && g.away_score != null
   );
