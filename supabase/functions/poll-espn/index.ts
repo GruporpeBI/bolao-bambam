@@ -235,6 +235,28 @@ Deno.serve(async (req: Request) => {
     );
   }
 
+  // 4b. Atualiza o games AO VIVO (placar + posse + status) para exibição no site.
+  //     Posse vai para coluna INTEGER → arredondar. Respeita result_locked (override do admin).
+  if (espnData.home != null) {
+    let upd = supabase
+      .from("games")
+      .update({
+        home_score:           espnData.home,
+        away_score:           espnData.away,
+        ball_possession_home: espnData.possession != null ? Math.round(espnData.possession) : null,
+        status_type:          isFt ? "finished" : "inprogress",
+        status_description:   espnData.status,
+      })
+      .eq("id", game.id)
+      .eq("result_locked", false);
+    // Não rebaixa um jogo já finalizado de volta para "inprogress" (fonte atrasada)
+    if (!isFt) upd = upd.or("status_type.is.null,status_type.neq.finished");
+    const { error: gameUpdateError } = await upd;
+    if (gameUpdateError) {
+      console.error("[poll-espn] games update error:", gameUpdateError.message);
+    }
+  }
+
   // 5. Se FT detectado pela ESPN, busca TDB ad-hoc e compara
   let consensus: string | undefined;
   if (isFt) {

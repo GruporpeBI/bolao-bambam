@@ -150,20 +150,23 @@ export async function compareAndFinalize(
   const appUrl     = Deno.env.get("APP_URL") ?? "";
   const syncSecret = Deno.env.get("SYNC_SECRET") ?? "";
 
+  // home_possession é coluna INTEGER → arredondar (espn_possession é numérico, ex 61.5)
+  const espnPossInt = ml.espn_possession != null ? Math.round(ml.espn_possession) : null;
+
   if (agree) {
     await supabase
       .from("match_latest")
       .update({
         home_score:      espnHome,
         away_score:      espnAway,
-        home_possession: ml.espn_possession,
+        home_possession: espnPossInt,
         consensus_status: "agreed",
         final_confirmed:  true,
         updated_at:       new Date().toISOString(),
       })
       .eq("event_id", eventId);
 
-    await notifyApp(appUrl, syncSecret, game, espnHome, espnAway, ml.espn_possession);
+    await notifyApp(appUrl, syncSecret, game, espnHome, espnAway, espnPossInt);
     console.log(`[compare] agreed: ${espnHome}-${espnAway}`);
     return "agreed";
   }
@@ -187,6 +190,8 @@ export async function compareAndFinalize(
       const afPoss    = possEntry?.value
         ? parseFloat(possEntry.value.replace("%", ""))
         : null;
+      // home_possession é INTEGER → arredondar (af_possession é numérico e fica cru)
+      const afPossInt = afPoss != null ? Math.round(afPoss) : null;
 
       const now = new Date().toISOString();
       await supabase
@@ -194,7 +199,7 @@ export async function compareAndFinalize(
         .update({
           home_score:      afHome,
           away_score:      afAway,
-          home_possession: afPoss,
+          home_possession: afPossInt,
           af_home_score:   afHome,
           af_away_score:   afAway,
           af_possession:   afPoss,
@@ -206,7 +211,7 @@ export async function compareAndFinalize(
         })
         .eq("event_id", eventId);
 
-      await notifyApp(appUrl, syncSecret, game, afHome, afAway, afPoss);
+      await notifyApp(appUrl, syncSecret, game, afHome, afAway, afPossInt);
       console.log(`[compare] AF árbitro: ${afHome}-${afAway}`);
       return bothPresent ? "conflict" : "confirmed";
     } catch (err) {

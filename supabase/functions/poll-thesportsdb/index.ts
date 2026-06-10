@@ -193,6 +193,27 @@ Deno.serve(async (req: Request) => {
     console.log(`[poll-thesportsdb] saved tdb=${tdbHome}-${tdbAway} status=${tdbStatus}`);
   }
 
+  // 4b. Atualiza o games AO VIVO (placar + status) para exibição no site.
+  //     Só grava se TDB trouxe placar; respeita result_locked (override do admin).
+  if (tdbHome != null) {
+    let upd = supabase
+      .from("games")
+      .update({
+        home_score:         tdbHome,
+        away_score:         tdbAway,
+        status_type:        isFt ? "finished" : "inprogress",
+        status_description: tdbStatus,
+      })
+      .eq("id", game.id)
+      .eq("result_locked", false);
+    // Não rebaixa um jogo já finalizado de volta para "inprogress" (fonte atrasada)
+    if (!isFt) upd = upd.or("status_type.is.null,status_type.neq.finished");
+    const { error: gameUpdateError } = await upd;
+    if (gameUpdateError) {
+      console.error("[poll-thesportsdb] games update error:", gameUpdateError.message);
+    }
+  }
+
   // 5. Se FT detectado pelo TDB, busca ESPN ad-hoc e compara
   let consensus: string | undefined;
   if (isFt) {

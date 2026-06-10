@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Button from "@/components/ui/Button";
-import { updateGameResult } from "./actions";
+import { updateGameResult, unlockGameResult } from "./actions";
 import { teamName } from "@/lib/team-names";
 
 interface ResultModalProps {
@@ -13,6 +13,7 @@ interface ResultModalProps {
     home_score: number | null;
     away_score: number | null;
     ball_possession_home: number | null;
+    result_locked?: boolean;
   };
 }
 
@@ -52,9 +53,24 @@ export default function ResultModal({ game }: ResultModalProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+  const [unlocking, setUnlocking] = useState(false);
 
   const homeLabel = teamName(game.home_team);
   const awayLabel = teamName(game.away_team);
+
+  async function handleUnlock() {
+    setUnlocking(true);
+    const result = await unlockGameResult(game.id);
+    setUnlocking(false);
+    if (result.success) {
+      setStatus("success");
+      setMessage("Jogo voltou ao modo automático.");
+      setTimeout(() => setOpen(false), 1200);
+    } else {
+      setStatus("error");
+      setMessage(result.error ?? "Erro ao destravar.");
+    }
+  }
 
   function validate() {
     const errs: Record<string, string> = {};
@@ -94,12 +110,19 @@ export default function ResultModal({ game }: ResultModalProps) {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="text-xs text-[#F6C900] underline underline-offset-2 hover:text-[#D4A800] transition-colors"
-      >
-        Editar resultado
-      </button>
+      <div className="flex items-center justify-center gap-2">
+        <button
+          onClick={() => setOpen(true)}
+          className="text-xs text-[#F6C900] underline underline-offset-2 hover:text-[#D4A800] transition-colors"
+        >
+          Editar resultado
+        </button>
+        {game.result_locked && (
+          <span className="text-[10px] text-amber-400/90 font-bold uppercase tracking-wider">
+            🔒 Travado
+          </span>
+        )}
+      </div>
 
       {open && (
         <div
@@ -108,9 +131,25 @@ export default function ResultModal({ game }: ResultModalProps) {
         >
           <div className="bg-[#1A1A1A] border border-[#F6C900]/20 rounded-sm p-6 w-full max-w-sm">
             <h3 className="text-[#F6C900] font-bold text-lg mb-1">Editar Resultado</h3>
-            <p className="text-[#FAF6EB]/50 text-sm mb-6">
+            <p className="text-[#FAF6EB]/50 text-sm mb-3">
               {homeLabel} × {awayLabel}
             </p>
+
+            {game.result_locked && (
+              <div className="mb-5 flex flex-col gap-2 rounded-sm border border-amber-400/30 bg-amber-400/5 px-3 py-2.5">
+                <p className="text-amber-300/90 text-xs leading-snug">
+                  🔒 Resultado fixado manualmente. O polling automático não sobrescreve este jogo.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleUnlock}
+                  disabled={unlocking}
+                  className="self-start text-xs text-amber-300 underline underline-offset-2 hover:text-amber-200 transition-colors disabled:opacity-50"
+                >
+                  {unlocking ? "Destravando..." : "🔓 Voltar ao automático"}
+                </button>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 

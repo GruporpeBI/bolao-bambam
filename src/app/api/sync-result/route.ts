@@ -45,12 +45,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Game not found for event_id " + event_id }, { status: 404 });
   }
 
+  // ball_possession_home é coluna INTEGER → arredondar valores fracionários (ex 61.5)
+  const possessionInt =
+    home_possession != null ? Math.round(home_possession) : null;
+
   const { error: updateError } = await supabase
     .from("games")
     .update({
       home_score: home_score ?? null,
       away_score: away_score ?? null,
-      ball_possession_home: home_possession ?? null,
+      ball_possession_home: possessionInt,
     } as never)
     .eq("id", (game as { id: string }).id);
 

@@ -24,6 +24,7 @@ interface Game {
   home_score: number | null;
   away_score: number | null;
   ball_possession_home: number | null;
+  result_locked?:           boolean;
   api_football_fixture_id?: string | null;
   espn_event_id?:           string | null;
   espn_league?:             string | null;

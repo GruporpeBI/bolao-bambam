@@ -129,18 +129,43 @@ export async function updateGameResult(
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = getAdminClient();
 
+  // Override manual do admin: trava o jogo (auto-poll não sobrescreve mais)
+  // e marca como finalizado (sai do "ao vivo", pontua como resultado final).
   const { error } = await supabase
     .from("games")
     .update({
       home_score: homeScore,
       away_score: awayScore,
       ball_possession_home: possession,
+      result_locked: true,
+      status_type: "finished",
     } as never)
     .eq("id", gameId);
 
   if (error) return { success: false, error: error.message };
 
   await recalculateScores();
+
+  revalidatePath("/admin");
+  revalidatePath("/ranking");
+  return { success: true };
+}
+
+// Destrava um jogo travado manualmente → volta ao modo automático (polling).
+export async function unlockGameResult(
+  gameId: string
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = getAdminClient();
+
+  const { error } = await supabase
+    .from("games")
+    .update({
+      result_locked: false,
+      status_type: "inprogress",
+    } as never)
+    .eq("id", gameId);
+
+  if (error) return { success: false, error: error.message };
 
   revalidatePath("/admin");
   revalidatePath("/ranking");
