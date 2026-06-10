@@ -210,12 +210,15 @@ Deno.serve(async (req: Request) => {
   };
 
   // ESPN é mais rico — atualiza placar ao vivo com dados ESPN se disponíveis
+  // home_possession/away_possession são colunas INTEGER → arredondar (64.4 → 64)
   if (espnData.home != null) {
     upsertRow.home_score      = espnData.home;
     upsertRow.away_score      = espnData.away;
-    upsertRow.home_possession = espnData.possession;
+    upsertRow.home_possession = espnData.possession != null
+      ? Math.round(espnData.possession)
+      : null;
     upsertRow.away_possession = espnData.possession != null
-      ? Math.round((100 - espnData.possession) * 10) / 10
+      ? Math.round(100 - espnData.possession)
       : null;
     upsertRow.status = espnData.status;
   }
