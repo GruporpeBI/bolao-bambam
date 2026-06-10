@@ -36,6 +36,7 @@ export interface Database {
           sofascore_url: string | null;
           status_type: string | null;
           status_description: string | null;
+          checkin_enabled: boolean;
           created_at: string;
         };
         Insert: Omit<Database["public"]["Tables"]["games"]["Row"], "id" | "created_at">;

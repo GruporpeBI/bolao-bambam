@@ -119,9 +119,111 @@ A Copa do Mundo deve usar `/fifa.world/scoreboard` (apenas ~60 eventos, mais rá
 
 ---
 
+## Mudanças Adicionais - Check-in para Portugal vs Nigeria
+
+### Migration 010: checkin_enabled
+**ARQUIVO**: `supabase/migrations/010_checkin_enabled_and_deadline_fix.sql`
+
+**ALTERAÇÕES**:
+```sql
+-- Adiciona coluna checkin_enabled à tabela games (default: false)
+ALTER TABLE public.games ADD COLUMN checkin_enabled boolean NOT NULL DEFAULT false;
+
+-- Habilita check-in apenas para Portugal vs Nigeria durante testes
+UPDATE public.games SET checkin_enabled = true WHERE sofascore_id = 16135568;
+```
+
+**REVERTER APÓS TESTES**:
+```sql
+-- Remove a habilitação de check-in para Portugal vs Nigeria
+UPDATE public.games SET checkin_enabled = false WHERE sofascore_id = 16135568;
+
+-- Opcionalmente, remover a coluna completamente (deixa comentário para futura reutilização)
+-- ALTER TABLE public.games DROP COLUMN checkin_enabled;
+```
+
+---
+
+### Código: src/app/palpites/page.tsx
+
+**ANTES (original)**:
+```typescript
+// Jogo do Brasil hoje para check-in
+const todayBrazilGame = allEnabled.find(
+  (g) => g.is_brazil_game && gameDayBrasilia(g.scheduled_at) === today
+) ?? null;
+```
+
+**DEPOIS (teste)**:
+```typescript
+// Jogo com check-in habilitado hoje para check-in
+const todayCheckinGame = allEnabled.find(
+  (g) => g.checkin_enabled && gameDayBrasilia(g.scheduled_at) === today
+) ?? null;
+```
+
+**REVERTER PARA**: código original acima (ou manter novo — permite flexibilidade futura)
+
+---
+
+### Código: src/app/palpites/page.tsx - GameCard props
+
+**ANTES (original)**:
+```typescript
+isGameDay={isPredictionDay && !!(game as { is_brazil_game?: boolean }).is_brazil_game}
+```
+
+**DEPOIS (teste)**:
+```typescript
+const checkinEnabled = !!(game as { checkin_enabled?: boolean }).checkin_enabled;
+return (
+  <GameCard
+    ...
+    isGameDay={isPredictionDay && checkinEnabled}
+    ...
+  />
+);
+```
+
+**REVERTER PARA**: código original acima (ou manter novo — permite check-in flexível)
+
+---
+
+### Código: src/app/palpites/actions.ts - Deadline bug fix
+
+**ANTES (BUG)**:
+```typescript
+const playedBrazilGames = brazilGames.filter(
+  (g) => new Date(g.scheduled_at) <= new Date()
+);
+
+if (playedBrazilGames.length >= 3) {
+  return { success: false, error: "..." };
+}
+```
+
+**PROBLEMA**: Bloqueava palpites assim que **3+ jogos começavam**, não quando **3+ jogos terminavam**.
+
+**DEPOIS (CORRIGIDO)**:
+```typescript
+const finishedBrazilGames = brazilGames.filter(
+  (g) => g.home_score != null && g.away_score != null
+);
+
+if (finishedBrazilGames.length >= 3) {
+  return { success: false, error: "..." };
+}
+```
+
+**REVERTER?**: NÃO — Este é um bug fix genuíno que deve ficar!
+
+---
+
 ## Checkpoint Final
 
 Após desfazer, confirme que:
-- ❌ Portugal vs Nigeria (16135568) não aparece em enrich-ids (esperado - não é Copa)
+- ❌ Portugal vs Nigeria (16135568) tem `checkin_enabled = false` no banco
+- ❌ Portugal vs Nigeria não aparece em enrich-ids (esperado - não é Copa)
 - ✅ Brazil vs Morocco (760419) continua aparecendo e funcionando
 - ✅ Polling de TDB continua funcionando (não foi alterado)
+- ✅ Deadline bug fix permanece implementado (permitir palpites de torneio até 3+ jogos TERMINAREM)

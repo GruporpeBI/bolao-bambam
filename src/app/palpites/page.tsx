@@ -43,9 +43,9 @@ export default async function PalpitesPage() {
     (g) => g.stage !== "semifinal" && g.stage !== "final"
   );
 
-  // Jogo do Brasil hoje para check-in
-  const todayBrazilGame = allEnabled.find(
-    (g) => g.is_brazil_game && gameDayBrasilia(g.scheduled_at) === today
+  // Jogo com check-in habilitado hoje para check-in
+  const todayCheckinGame = allEnabled.find(
+    (g) => g.checkin_enabled && gameDayBrasilia(g.scheduled_at) === today
   ) ?? null;
 
   const locationConfig = await getLocationConfig();
@@ -86,12 +86,12 @@ export default async function PalpitesPage() {
 
     tournamentPrediction = (tp as TournamentPredRow | null) ?? null;
 
-    if (todayBrazilGame) {
+    if (todayCheckinGame) {
       const { data: att } = await supabase
         .from("attendances")
         .select("id")
         .eq("user_id", dbUserId)
-        .eq("game_id", todayBrazilGame.id)
+        .eq("game_id", todayCheckinGame.id)
         .maybeSingle();
       alreadyCheckedIn = !!att;
     }
@@ -149,7 +149,8 @@ export default async function PalpitesPage() {
           <div className="flex flex-col gap-4">
             {regularGames.map((game) => {
               const isPredictionDay = !!(game as { predictions_early?: boolean }).predictions_early || gameDayBrasilia(game.scheduled_at) === today;
-              const isThisGameCheckedIn = alreadyCheckedIn && todayBrazilGame?.id === game.id;
+              const isThisGameCheckedIn = alreadyCheckedIn && todayCheckinGame?.id === game.id;
+              const checkinEnabled = !!(game as { checkin_enabled?: boolean }).checkin_enabled;
               return (
                 <GameCard
                   key={game.id}
@@ -159,7 +160,7 @@ export default async function PalpitesPage() {
                   isLoggedIn={!!dbUserId}
                   isPredictionDay={isPredictionDay}
                   alreadyCheckedIn={isThisGameCheckedIn}
-                  isGameDay={isPredictionDay && !!(game as { is_brazil_game?: boolean }).is_brazil_game}
+                  isGameDay={isPredictionDay && checkinEnabled}
                   restaurantLat={locationConfig.lat}
                   restaurantLng={locationConfig.lng}
                   radiusM={locationConfig.radiusM}

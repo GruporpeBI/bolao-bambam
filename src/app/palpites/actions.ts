@@ -100,17 +100,18 @@ export async function submitTournamentPredictions(
 
   const { data: brazilGamesData } = await supabase
     .from("games")
-    .select("id, scheduled_at")
+    .select("id, scheduled_at, home_score, away_score")
     .eq("is_brazil_game", true as unknown as string)
     .order("scheduled_at", { ascending: true });
 
-  const brazilGames = (brazilGamesData as Pick<GameRow, "id" | "scheduled_at">[] | null) ?? [];
+  const brazilGames = (brazilGamesData as Pick<GameRow, "id" | "scheduled_at" | "home_score" | "away_score">[] | null) ?? [];
 
-  const playedBrazilGames = brazilGames.filter(
-    (g) => new Date(g.scheduled_at) <= new Date()
+  // Conta apenas jogos que já foram FINALIZADOS (têm resultado)
+  const finishedBrazilGames = brazilGames.filter(
+    (g) => g.home_score != null && g.away_score != null
   );
 
-  if (playedBrazilGames.length >= 3) {
+  if (finishedBrazilGames.length >= 3) {
     return {
       success: false,
       error: "O prazo para palpites do torneio já encerrou (após os 3 primeiros jogos do Brasil).",
