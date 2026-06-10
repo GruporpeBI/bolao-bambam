@@ -219,10 +219,32 @@ if (finishedBrazilGames.length >= 3) {
 
 ---
 
+## Mudanças Adicionais - Jogos de teste (amistosos)
+
+### Jogo de teste: Bolivia vs Algeria (sofascore 16288573)
+Inserido via DB em 10/06/2026 para testar polling cross-source + check-in.
+Amistoso (não é Copa), kickoff 2026-06-11 00:00 UTC.
+IDs: tdb=2479816, espn=401874117 (fifa.friendly).
+
+**REVERTER APÓS TESTES:**
+```sql
+-- Desabilita check-in do jogo de teste
+UPDATE public.games SET checkin_enabled = false WHERE sofascore_id = 16288573;
+
+-- Opcional: desabilitar/remover o jogo de teste completamente
+-- UPDATE public.games SET is_enabled = false WHERE sofascore_id = 16288573;
+-- DELETE FROM public.games WHERE sofascore_id = 16288573;
+```
+Os crons `gcron-tdb-<id>`/`gcron-espn-<id>` são auto-removidos pelo
+`refresh_game_crons()` no dia seguinte (jogo sai da janela).
+
+---
+
 ## Checkpoint Final
 
 Após desfazer, confirme que:
 - ❌ Portugal vs Nigeria (16135568) tem `checkin_enabled = false` no banco
+- ❌ Bolivia vs Algeria (16288573) tem `checkin_enabled = false` (e/ou is_enabled=false) no banco
 - ❌ Portugal vs Nigeria não aparece em enrich-ids (esperado - não é Copa)
 - ✅ Brazil vs Morocco (760419) continua aparecendo e funcionando
 - ✅ Polling de TDB continua funcionando (não foi alterado)
