@@ -64,7 +64,9 @@ BEGIN
     PERFORM cron.unschedule(j.jobname);
   END LOOP;
 
-  -- 3b. Recria para jogos de hoje habilitados e não finalizados
+  -- 3b. Recria para jogos habilitados na janela [now-4h .. now+28h] e não finalizados.
+  --     Janela rolante (em vez de "data UTC = hoje") para que jogos que começam
+  --     entre 00:00 e 04:00 UTC recebam o cron no run do dia anterior (04:00).
   FOR g IN
     SELECT gm.id,
            gm.scheduled_at,
@@ -73,7 +75,7 @@ BEGIN
     FROM   public.games gm
     LEFT JOIN public.match_latest ml ON ml.event_id = gm.sofascore_id
     WHERE  gm.is_enabled = true
-      AND  (gm.scheduled_at AT TIME ZONE 'UTC')::date = (now() AT TIME ZONE 'UTC')::date
+      AND  gm.scheduled_at BETWEEN (now() - interval '4 hours') AND (now() + interval '28 hours')
       AND  COALESCE(ml.final_confirmed, false) = false
   LOOP
     v_start_hour := EXTRACT(HOUR  FROM g.scheduled_at AT TIME ZONE 'UTC')::int;
