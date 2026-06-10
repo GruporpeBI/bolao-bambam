@@ -4,11 +4,11 @@
  * Auto-discovers thesportsdb_event_id, espn_event_id, espn_league and
  * api_football_fixture_id for all games that are missing any of those IDs.
  *
- * Sources queried (1 bulk request each):
- *   1. TheSportsDB   → /eventsseason.php?id=4429&s=2026 (primary)
- *                    → /eventsnextleague.php?id=4429 (fallback, tem idAPIfootball)
- *   2. ESPN          → /scoreboard?limit=200&dates=20260611-20260719
- *   3. API-Football  → /fixtures?league=1&season=2026 (fallback se TDB não tiver idAPIfootball)
+ * Sources queried:
+ *   1. TheSportsDB   → /eventsseason.php?id=4429&s=2026 (15 eventos)
+ *                    + /eventsnextleague.php?id=4429 (suplementa idAPIfootball)
+ *   2. ESPN          → /scoreboard?limit=200&dates=20260611-20260719 (104 eventos)
+ *   3. API-Football  → /fixtures?league=1&season=2026 (fallback, requer plano pago para 2026)
  *
  * Team name matching uses a normalizer to handle aliases like
  * "United States" ↔ "USA", "Republic of Korea" ↔ "South Korea", etc.
@@ -157,33 +157,43 @@ interface TdbEvent {
 async function loadTdbEvents(): Promise<TdbEvent[]> {
   // FIFA World Cup 2026 (league 4429, season 2026)
   const urlPrimary = "https://www.thesportsdb.com/api/v1/json/123/eventsseason.php?id=4429&s=2026";
-  const urlFallback = "https://www.thesportsdb.com/api/v1/json/123/eventsnextleague.php?id=4429";
+  const urlSupplement = "https://www.thesportsdb.com/api/v1/json/123/eventsnextleague.php?id=4429";
 
   try {
-    // Tenta eventsseason.php primeiro
-    const res = await fetch(urlPrimary, { headers: { Accept: "application/json" } });
-    if (res.ok) {
-      const data = await res.json() as { events: TdbEvent[] | null };
-      if (data.events && data.events.length > 0) {
-        console.log(`[enrich-ids] TDB season loaded: ${data.events.length} events`);
-        return data.events;
+    // Carrega eventsseason.php para obter todos os eventos da season
+    let events: TdbEvent[] = [];
+    const resPrimary = await fetch(urlPrimary, { headers: { Accept: "application/json" } });
+    if (resPrimary.ok) {
+      const data = await resPrimary.json() as { events: TdbEvent[] | null };
+      events = data.events ?? [];
+      console.log(`[enrich-ids] TDB season loaded: ${events.length} events`);
+    } else {
+      console.warn(`[enrich-ids] TDB season HTTP ${resPrimary.status}`);
+    }
+
+    // Suplementa com eventsnextleague.php que traz idAPIfootball
+    if (events.length > 0) {
+      try {
+        const resSupplement = await fetch(urlSupplement, { headers: { Accept: "application/json" } });
+        if (resSupplement.ok) {
+          const dataSupplement = await resSupplement.json() as { events: TdbEvent[] | null };
+          const supplementEvents = dataSupplement.events ?? [];
+
+          // Mescla: insere idAPIfootball dos supplementEvents nos events principais
+          for (const suppEvent of supplementEvents) {
+            const idx = events.findIndex(e => e.idEvent === suppEvent.idEvent);
+            if (idx >= 0 && suppEvent.idAPIfootball) {
+              events[idx].idAPIfootball = suppEvent.idAPIfootball;
+            }
+          }
+          console.log(`[enrich-ids] TDB eventsnextleague merged: ${supplementEvents.length} with idAPIfootball`);
+        }
+      } catch (err) {
+        console.warn("[enrich-ids] TDB supplement fetch error:", err);
       }
     }
 
-    // Fallback: eventsnextleague.php
-    console.warn(`[enrich-ids] TDB season returned empty, trying eventsnextleague...`);
-    const resFallback = await fetch(urlFallback, { headers: { Accept: "application/json" } });
-    if (!resFallback.ok) {
-      console.warn(`[enrich-ids] TDB eventsnextleague HTTP ${resFallback.status}`);
-      return [];
-    }
-    const dataFallback = await resFallback.json() as { events: TdbEvent[] | null };
-    const eventsFallback = dataFallback.events ?? [];
-    if (eventsFallback.length > 0) {
-      console.log(`[enrich-ids] TDB eventsnextleague loaded: ${eventsFallback.length} events`);
-      return eventsFallback;
-    }
-    return [];
+    return events;
   } catch (err) {
     console.warn("[enrich-ids] TDB fetch error:", err);
     return [];
