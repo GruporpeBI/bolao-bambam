@@ -7,9 +7,9 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  dark:  "bg-[#1A1A1A] border border-[#F6C900]/20 text-[#FAF6EB]",
-  cream: "bg-[#FAF6EB] border border-[#1A1A1A]/10 text-[#1A1A1A]",
-  gold:  "bg-[#F6C900] border border-[#D4A800] text-[#1A1A1A]",
+  dark:  "bg-[#5A1220] border border-[#F7EDE0]/20 text-[#F7EDE0]",
+  cream: "bg-[#F7EDE0] border border-[#5A1220]/10 text-[#5A1220]",
+  gold:  "bg-[#F7EDE0] border border-[#EDE0CE] text-[#5A1220]",
 };
 
 export default function Card({ variant = "dark", className = "", children, ...props }: CardProps) {

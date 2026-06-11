@@ -130,15 +130,15 @@ export default async function PalpitesPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[#1A1A1A]">
+    <main className="min-h-screen bg-[#5A1220]">
       <div className="max-w-3xl mx-auto px-4 py-10">
         <div className="flex items-center gap-4 mb-10">
-          <IconEscudo width={56} height={95} />
+          <IconEscudo width={96} height={75} />
           <div>
-            <h1 className="text-3xl font-bold text-[#F6C900] uppercase tracking-tight">
+            <h1 className="font-display text-4xl font-semibold text-[#F7EDE0] uppercase tracking-tight">
               Meus Palpites
             </h1>
-            <p className="text-[#FAF6EB]/50 text-sm mt-1">
+            <p className="text-[#F7EDE0]/50 text-sm mt-1">
               Envie seu palpite até 5 minutos antes de cada jogo
             </p>
           </div>
@@ -146,8 +146,8 @@ export default async function PalpitesPage() {
 
 
         {!dbUserId && (
-          <div className="border border-[#F6C900]/20 rounded-sm px-5 py-4 mb-8 text-[#FAF6EB]/70 text-sm">
-            <a href="/cadastro" className="text-[#F6C900] font-semibold underline underline-offset-2">
+          <div className="border border-[#F7EDE0]/20 rounded-sm px-5 py-4 mb-8 text-[#F7EDE0]/70 text-sm">
+            <a href="/cadastro" className="text-[#F7EDE0] font-semibold underline underline-offset-2">
               Faça login
             </a>{" "}
             para enviar palpites.
@@ -156,10 +156,10 @@ export default async function PalpitesPage() {
 
         {/* ── PALPITES DO TORNEIO ── */}
         <div className="mb-10">
-          <h2 className="text-xl font-bold text-[#FAF6EB] uppercase tracking-tight mb-1">
+          <h2 className="font-display text-2xl font-semibold text-[#F7EDE0] uppercase tracking-tight mb-1">
             Palpites do Torneio
           </h2>
-          <p className="text-[#FAF6EB]/40 text-sm mb-4">
+          <p className="text-[#F7EDE0]/40 text-sm mb-4">
             Preencha semifinalistas, finalistas e campeão antes de enviar palpites de jogo.
           </p>
           <TournamentPredictions
@@ -174,7 +174,7 @@ export default async function PalpitesPage() {
         {regularGames.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
             <Badge variant="dark">Em breve</Badge>
-            <p className="text-[#FAF6EB]/50 text-lg">Nenhum jogo disponível.</p>
+            <p className="text-[#F7EDE0]/50 text-lg">Nenhum jogo disponível.</p>
           </div>
         ) : (
           <div className="flex flex-col gap-4">

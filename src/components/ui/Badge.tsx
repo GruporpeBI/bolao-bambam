@@ -7,10 +7,10 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  gold:    "bg-[#F6C900] text-[#1A1A1A]",
-  green:   "bg-[#004600] text-[#F6C900]",
-  dark:    "bg-[#1A1A1A] text-[#F6C900] border border-[#F6C900]/40",
-  outline: "border border-[#F6C900] text-[#F6C900]",
+  gold:    "bg-[#F7EDE0] text-[#7D1A2E]",
+  green:   "bg-[#1E2B8F] text-[#F7EDE0]",
+  dark:    "bg-transparent text-[#F7EDE0]/70 border border-[#F7EDE0]/35",
+  outline: "border border-[#F7EDE0] text-[#F7EDE0]",
 };
 
 export default function Badge({ variant = "gold", className = "", children, ...props }: BadgeProps) {

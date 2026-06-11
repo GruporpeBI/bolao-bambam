@@ -1,31 +1,50 @@
 @import "tailwindcss";
 
-:root {
-  --gold:        #F6C900;
-  --gold-dark:   #D4A800;
-  --green-dark:  #004600;
-  --green-forest:#006837;
-  --black:       #1A1A1A;
-  --cream:       #FAF6EB;
-  --cream-dark:  #F0EAD6;
+/* ══════════════════════════════════════════
+   FONTES — BAMBAM COPA
+   (servidas de /public/fonts via next/font/local no layout)
+══════════════════════════════════════════ */
 
-  --background:  var(--black);
+/* ══════════════════════════════════════════
+   TOKENS — identidade BamBam Café
+   Bordô/vinho + creme quente (extraído do deck RPE + index.html)
+══════════════════════════════════════════ */
+:root {
+  --wine:         #7D1A2E;
+  --wine-dark:    #5A1220;
+  --wine-hover:   #6B1526;
+  --wine-raised:  #6E1727;
+  --cream:        #F7EDE0;
+  --cream-dark:   #EDE0CE;
+  --cream-mid:    #F0E3D0;
+  --cobalt:       #1E2B8F;
+  --white:        #FFFFFF;
+
+  /* compat: o app referencia estes nomes legados em pontos de tema */
+  --gold:        var(--cream);
+  --gold-dark:   var(--cream-dark);
+  --green-dark:  var(--wine);
+  --green-forest:var(--wine-hover);
+  --black:       var(--wine-dark);
+
+  --background:  var(--wine-dark);
   --foreground:  var(--cream);
 }
 
 @theme inline {
-  --color-gold:         var(--gold);
-  --color-gold-dark:    var(--gold-dark);
-  --color-green-dark:   var(--green-dark);
-  --color-green-forest: var(--green-forest);
-  --color-black:        var(--black);
+  --color-wine:         var(--wine);
+  --color-wine-dark:    var(--wine-dark);
+  --color-wine-hover:   var(--wine-hover);
   --color-cream:        var(--cream);
   --color-cream-dark:   var(--cream-dark);
+  --color-cream-mid:    var(--cream-mid);
+  --color-cobalt:       var(--cobalt);
   --color-background:   var(--background);
   --color-foreground:   var(--foreground);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans:    var(--font-inter);
+  --font-display: var(--font-timesnow);
+  --font-hand:    var(--font-phontphreaks);
 }
 
 * {
@@ -35,11 +54,50 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  font-weight: 500;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Títulos no display serifado da marca */
+h1, h2, h3, h4 {
+  font-family: var(--font-timesnow), Georgia, "Times New Roman", serif;
+  font-weight: 600;
+}
+
+/* Utilitário para o lettering manuscrito da marca */
+.font-hand {
+  font-family: var(--font-phontphreaks), cursive;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--black); }
-::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--cream-dark); }
+::-webkit-scrollbar-thumb { background: var(--wine); border-radius: 3px; }
+
+/* ══════════════════════════════════════════
+   TIRA TABULEIRO — divisor de seções (marca)
+══════════════════════════════════════════ */
+.checker-strip {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  height: 16px;
+}
+.checker-strip span:nth-child(odd)  { background: var(--wine); }
+.checker-strip span:nth-child(even) { background: var(--cream); }
+.checker-strip.inv span:nth-child(odd)  { background: var(--cream); }
+.checker-strip.inv span:nth-child(even) { background: var(--wine); }
+
+/* Textura tabuleiro sutil para heros vinho */
+.bam-hero-texture::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(45deg, rgba(247,237,224,.04) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(247,237,224,.04) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(247,237,224,.04) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(247,237,224,.04) 75%);
+  background-size: 56px 56px;
+  background-position: 0 0, 0 28px, 28px -28px, -28px 0;
+  pointer-events: none;
+}

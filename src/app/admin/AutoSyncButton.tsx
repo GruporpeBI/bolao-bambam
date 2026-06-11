@@ -81,7 +81,7 @@ export function AutoSyncButton({ gameId, hasEspnId, hasAfId, onSuccess }: Props)
         disabled={status === "loading"}
         className={[
           "w-full max-w-[220px] px-3 py-2 rounded text-sm font-semibold transition-all",
-          status === "idle"         && "bg-[#F6C900]/10 border border-[#F6C900]/50 text-[#F6C900] hover:bg-[#F6C900]/20",
+          status === "idle"         && "bg-[#F7EDE0]/10 border border-[#F7EDE0]/50 text-[#F7EDE0] hover:bg-[#F7EDE0]/20",
           status === "loading"      && "bg-zinc-800 border border-zinc-600 text-zinc-400 cursor-wait",
           status === "ok"           && "bg-green-500/10 border border-green-500 text-green-400",
           status === "not_finished" && "bg-yellow-500/10 border border-yellow-500/50 text-yellow-400",

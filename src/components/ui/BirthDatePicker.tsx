@@ -48,7 +48,7 @@ export default function BirthDatePicker({ value, onChange, error, disabled }: Bi
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-semibold text-[#F6C900] uppercase tracking-wider">
+      <label className="text-sm font-semibold text-[#F7EDE0] uppercase tracking-wider">
         Data de nascimento
       </label>
       <input
@@ -60,9 +60,9 @@ export default function BirthDatePicker({ value, onChange, error, disabled }: Bi
         disabled={disabled}
         maxLength={10}
         autoComplete="bday"
-        className={`w-full bg-[#1A1A1A] border ${
-          error ? "border-red-500" : "border-[#F6C900]/30"
-        } text-[#FAF6EB] rounded-sm px-4 py-3 text-base outline-none focus:border-[#F6C900] transition-colors placeholder:text-[#FAF6EB]/30 disabled:opacity-50 disabled:cursor-not-allowed`}
+        className={`w-full bg-[#5A1220] border ${
+          error ? "border-red-500" : "border-[#F7EDE0]/30"
+        } text-[#F7EDE0] rounded-sm px-4 py-3 text-base outline-none focus:border-[#F7EDE0] transition-colors placeholder:text-[#F7EDE0]/30 disabled:opacity-50 disabled:cursor-not-allowed`}
       />
       {error && <span className="text-red-400 text-xs">{error}</span>}
     </div>

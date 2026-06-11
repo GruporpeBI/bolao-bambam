@@ -36,7 +36,7 @@ function Toggle({ checked, onChange, disabled, label }: {
       onClick={onChange}
       disabled={disabled}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none disabled:opacity-50 ${
-        checked ? "bg-[#004600]" : "bg-[#FAF6EB]/20"
+        checked ? "bg-[#7D1A2E]" : "bg-[#F7EDE0]/20"
       }`}
       aria-label={label}
     >
@@ -75,17 +75,17 @@ export default function GameRow({ game }: GameRowProps) {
   });
 
   return (
-    <tr className="border-b border-[#F6C900]/10 hover:bg-[#F6C900]/5 transition-colors">
+    <tr className="border-b border-[#F7EDE0]/10 hover:bg-[#F7EDE0]/5 transition-colors">
       <td className="py-3 pr-4">
         <div className="flex flex-col gap-0.5">
-          <span className="text-[#FAF6EB] font-medium text-sm">
+          <span className="text-[#F7EDE0] font-medium text-sm">
             {teamName(game.home_team)} × {teamName(game.away_team)}
           </span>
-          <span className="text-[#FAF6EB]/40 text-xs">{dateStr}</span>
+          <span className="text-[#F7EDE0]/40 text-xs">{dateStr}</span>
         </div>
       </td>
       <td className="py-3 pr-4">
-        <span className="text-[#FAF6EB]/60 text-xs">{stageLabel[game.stage] ?? game.stage}</span>
+        <span className="text-[#F7EDE0]/60 text-xs">{stageLabel[game.stage] ?? game.stage}</span>
       </td>
       <td className="py-3 pr-4">
         <div className="flex flex-wrap gap-1">
@@ -109,7 +109,7 @@ export default function GameRow({ game }: GameRowProps) {
             disabled={loadingEarly}
             label={early ? "Fechar palpite antecipado" : "Abrir palpite antecipado"}
           />
-          {early && <span className="text-[#F6C900] text-[9px] font-bold uppercase tracking-wide">Aberto</span>}
+          {early && <span className="text-[#F7EDE0] text-[9px] font-bold uppercase tracking-wide">Aberto</span>}
         </div>
       </td>
     </tr>

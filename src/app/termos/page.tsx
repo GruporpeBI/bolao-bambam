@@ -1,16 +1,16 @@
 import { IconEscudo } from "@/components/icons";
 
 export const metadata = {
-  title: "Termos e Condições — Bolão Copa 2026 | Mercearia Amauri",
+  title: "Termos e Condições — Bolão Copa 2026 | Bam Bam Café",
 };
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-base font-bold text-[#F6C900] uppercase tracking-wider border-b border-[#F6C900]/20 pb-2">
+      <h2 className="text-base font-bold text-[#F7EDE0] uppercase tracking-wider border-b border-[#F7EDE0]/20 pb-2">
         {title}
       </h2>
-      <div className="flex flex-col gap-2 text-[#FAF6EB]/70 text-sm leading-relaxed">
+      <div className="flex flex-col gap-2 text-[#F7EDE0]/70 text-sm leading-relaxed">
         {children}
       </div>
     </section>
@@ -24,7 +24,7 @@ function P({ children }: { children: React.ReactNode }) {
 function Li({ children }: { children: React.ReactNode }) {
   return (
     <li className="flex gap-2">
-      <span className="text-[#F6C900] mt-1 shrink-0">▸</span>
+      <span className="text-[#F7EDE0] mt-1 shrink-0">▸</span>
       <span>{children}</span>
     </li>
   );
@@ -32,20 +32,20 @@ function Li({ children }: { children: React.ReactNode }) {
 
 export default function TermosPage() {
   return (
-    <main className="min-h-screen bg-[#1A1A1A]">
+    <main className="min-h-screen bg-[#5A1220]">
       {/* Header */}
-      <section className="bg-gradient-to-b from-[#004600] to-[#1A1A1A] px-6 py-12">
-        <div className="max-w-2xl mx-auto flex flex-col items-center gap-4 text-center">
-          <IconEscudo width={48} height={81} />
+      <section className="bam-hero-texture relative overflow-hidden bg-[#7D1A2E] px-6 py-14">
+        <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center gap-4 text-center">
+          <IconEscudo width={110} height={86} />
           <div>
-            <p className="text-[#F6C900]/70 text-xs uppercase tracking-widest font-semibold mb-1">
-              Copa no Merça — A Casa da Torcida
+            <p className="text-[10px] text-[#F7EDE0]/50 uppercase tracking-[0.2em] font-bold mb-2">
+              Bam Bam Café — Você faz parte dessa torcida
             </p>
-            <h1 className="text-3xl font-bold text-[#F6C900] uppercase tracking-tight">
+            <h1 className="font-display text-4xl font-semibold text-[#F7EDE0] uppercase tracking-tight">
               Termos e Condições
             </h1>
-            <p className="text-[#FAF6EB]/50 text-xs mt-2">
-              Bolão Copa do Mundo 2026 — Mercearia Amauri
+            <p className="text-[#F7EDE0]/50 text-xs mt-2">
+              Bolão Copa do Mundo 2026 — Bam Bam Café
             </p>
           </div>
         </div>
@@ -55,14 +55,14 @@ export default function TermosPage() {
       <div className="max-w-2xl mx-auto px-4 py-10 flex flex-col gap-8">
 
         {/* Aviso de data */}
-        <div className="bg-[#004600]/30 border border-[#F6C900]/20 rounded-sm px-4 py-3 text-xs text-[#FAF6EB]/50 text-center">
+        <div className="bg-[#7D1A2E]/30 border border-[#F7EDE0]/20 rounded-sm px-4 py-3 text-xs text-[#F7EDE0]/50 text-center">
           Última atualização: maio de 2026 — Válido para a Copa do Mundo FIFA 2026
         </div>
 
         <Section title="1. Sobre a Promoção">
           <P>
-            O <strong className="text-[#FAF6EB]">Bolão Copa 2026 — Mercearia Amauri</strong> é uma campanha de
-            engajamento promovida pela Mercearia Amauri durante a Copa do Mundo FIFA 2026, realizada nos Estados
+            O <strong className="text-[#F7EDE0]">Bolão Copa 2026 — Bam Bam Café</strong> é uma campanha de
+            engajamento promovida pela Bam Bam Café durante a Copa do Mundo FIFA 2026, realizada nos Estados
             Unidos, Canadá e México.
           </P>
           <P>
@@ -91,21 +91,21 @@ export default function TermosPage() {
 
         <Section title="3. Regras de Participação">
           <P>
-            Os jogos disponíveis para palpite são os <strong className="text-[#FAF6EB]">jogos da Seleção
-            Brasileira</strong> e o <strong className="text-[#FAF6EB]">jogo da Final</strong> da Copa do
+            Os jogos disponíveis para palpite são os <strong className="text-[#F7EDE0]">jogos da Seleção
+            Brasileira</strong> e o <strong className="text-[#F7EDE0]">jogo da Final</strong> da Copa do
             Mundo 2026. Os jogos habilitados são definidos pela administração do bolão.
           </P>
           <P>
-            <strong className="text-[#FAF6EB]">Prazo para palpites:</strong> cada palpite deve ser enviado
+            <strong className="text-[#F7EDE0]">Prazo para palpites:</strong> cada palpite deve ser enviado
             até 5 (cinco) minutos antes do horário oficial de início da partida. Após esse prazo, o formulário
             é automaticamente bloqueado e não é possível enviar ou alterar palpites.
           </P>
           <P>
-            <strong className="text-[#FAF6EB]">Palpites do torneio</strong> (semifinalistas, finalistas e
+            <strong className="text-[#F7EDE0]">Palpites do torneio</strong> (semifinalistas, finalistas e
             campeão) devem ser registrados antes do início do 3º (terceiro) jogo do Brasil na competição.
           </P>
           <P>
-            Uma vez confirmado, o palpite <strong className="text-[#FAF6EB]">não pode ser editado ou
+            Uma vez confirmado, o palpite <strong className="text-[#F7EDE0]">não pode ser editado ou
             cancelado</strong>.
           </P>
         </Section>
@@ -115,12 +115,12 @@ export default function TermosPage() {
           <div className="overflow-x-auto mt-1">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-[#F6C900]/20">
-                  <th className="text-[#F6C900] font-bold py-2 pr-4">Evento</th>
-                  <th className="text-[#F6C900] font-bold py-2 text-right">Pontos</th>
+                <tr className="border-b border-[#F7EDE0]/20">
+                  <th className="text-[#F7EDE0] font-bold py-2 pr-4">Evento</th>
+                  <th className="text-[#F7EDE0] font-bold py-2 text-right">Pontos</th>
                 </tr>
               </thead>
-              <tbody className="text-[#FAF6EB]/70">
+              <tbody className="text-[#F7EDE0]/70">
                 {[
                   ["Presença no restaurante (jogo do Brasil)", "51 pts"],
                   ["Acertou o ganhador (sem placar exato)", "16 pts"],
@@ -131,9 +131,9 @@ export default function TermosPage() {
                   ["Placar exato da final", "121 pts"],
                   ["Presença no restaurante na final", "100 pts"],
                 ].map(([ev, pts]) => (
-                  <tr key={ev} className="border-b border-[#FAF6EB]/5">
+                  <tr key={ev} className="border-b border-[#F7EDE0]/5">
                     <td className="py-2 pr-4">{ev}</td>
-                    <td className="py-2 text-right font-bold text-[#F6C900]">{pts}</td>
+                    <td className="py-2 text-right font-bold text-[#F7EDE0]">{pts}</td>
                   </tr>
                 ))}
               </tbody>
@@ -156,7 +156,7 @@ export default function TermosPage() {
               "Sorteio presencial realizado pelo organizador, na presença dos participantes empatados.",
             ].map((item, i) => (
               <li key={i} className="flex gap-3">
-                <span className="text-[#F6C900] font-bold shrink-0 w-5">{i + 1}.</span>
+                <span className="text-[#F7EDE0] font-bold shrink-0 w-5">{i + 1}.</span>
                 <span>{item}</span>
               </li>
             ))}
@@ -170,7 +170,7 @@ export default function TermosPage() {
           </P>
           <P>
             Os prêmios são pessoais e intransferíveis, não podendo ser convertidos em dinheiro. A
-            premiação será entregue presencialmente na Mercearia Amauri.
+            premiação será entregue presencialmente na Bam Bam Café.
           </P>
           <P>
             O organizador reserva-se o direito de alterar os prêmios mediante comunicação prévia aos
@@ -180,7 +180,7 @@ export default function TermosPage() {
 
         <Section title="7. Verificação de Presença">
           <P>
-            A presença nos jogos é verificada presencialmente pela equipe da Mercearia Amauri. O
+            A presença nos jogos é verificada presencialmente pela equipe da Bam Bam Café. O
             participante deve estar presente no estabelecimento durante a partida para ter a presença
             registrada.
           </P>
@@ -247,25 +247,25 @@ export default function TermosPage() {
         <Section title="11. Contato e Foro">
           <P>
             Dúvidas, reclamações ou solicitações relacionadas ao Bolão Copa 2026 devem ser dirigidas
-            diretamente à equipe da Mercearia Amauri, no estabelecimento ou pelos canais de atendimento
+            diretamente à equipe da Bam Bam Café, no estabelecimento ou pelos canais de atendimento
             disponibilizados.
           </P>
           <P>
-            Fica eleito o foro da comarca do município sede da Mercearia Amauri para dirimir quaisquer
+            Fica eleito o foro da comarca do município sede da Bam Bam Café para dirimir quaisquer
             controvérsias decorrentes destes termos, com renúncia a qualquer outro, por mais privilegiado
             que seja.
           </P>
         </Section>
 
         {/* Rodapé dos termos */}
-        <div className="border-t border-[#F6C900]/10 pt-6 flex flex-col items-center gap-3 text-center">
-          <p className="text-[#FAF6EB]/30 text-xs">
+        <div className="border-t border-[#F7EDE0]/10 pt-6 flex flex-col items-center gap-3 text-center">
+          <p className="text-[#F7EDE0]/30 text-xs">
             Ao se cadastrar no Bolão Copa 2026, o participante declara ter lido,
             compreendido e aceito integralmente estes Termos e Condições.
           </p>
           <a
             href="/cadastro"
-            className="bg-[#F6C900] hover:bg-[#e6b800] text-[#1A1A1A] font-bold px-8 py-3 rounded-sm text-sm uppercase tracking-wider transition-colors inline-block"
+            className="bg-[#F7EDE0] hover:bg-[#EDE0CE] text-[#5A1220] font-bold px-8 py-3 rounded-sm text-sm uppercase tracking-wider transition-colors inline-block"
           >
             Voltar ao cadastro
           </a>

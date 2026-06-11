@@ -24,7 +24,7 @@ export default function AdminButton() {
     return (
       <button
         onClick={() => setShow(true)}
-        className="text-[#FAF6EB]/15 hover:text-[#FAF6EB]/40 text-xs transition-colors mt-2 select-none"
+        className="text-[#F7EDE0]/15 hover:text-[#F7EDE0]/40 text-xs transition-colors mt-2 select-none"
         aria-label="Acesso admin"
       >
         ⚙
@@ -40,15 +40,15 @@ export default function AdminButton() {
         onChange={(e) => { setPw(e.target.value); setError(""); }}
         placeholder="Senha"
         autoFocus
-        className="bg-[#252525] border border-[#F6C900]/20 text-[#FAF6EB] rounded-sm px-3 py-1 text-xs w-20 outline-none focus:border-[#F6C900]/50 placeholder:text-[#FAF6EB]/20"
+        className="bg-[#6E1727] border border-[#F7EDE0]/20 text-[#F7EDE0] rounded-sm px-3 py-1 text-xs w-20 outline-none focus:border-[#F7EDE0]/50 placeholder:text-[#F7EDE0]/20"
       />
-      <button type="submit" className="text-[#F6C900] text-xs font-bold hover:text-[#e6b800] transition-colors">
+      <button type="submit" className="text-[#F7EDE0] text-xs font-bold hover:text-[#EDE0CE] transition-colors">
         →
       </button>
       <button
         type="button"
         onClick={() => { setShow(false); setPw(""); setError(""); }}
-        className="text-[#FAF6EB]/30 text-xs hover:text-[#FAF6EB]/60 transition-colors"
+        className="text-[#F7EDE0]/30 text-xs hover:text-[#F7EDE0]/60 transition-colors"
       >
         ✕
       </button>

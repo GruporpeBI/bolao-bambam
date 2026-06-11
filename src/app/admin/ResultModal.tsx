@@ -29,7 +29,7 @@ function ScoreField({
   }
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-bold text-[#F6C900] uppercase tracking-wider">{label}</label>
+      <label className="text-xs font-bold text-[#F7EDE0] uppercase tracking-wider">{label}</label>
       <input
         type="text"
         inputMode="numeric"
@@ -38,7 +38,7 @@ function ScoreField({
         onChange={handleChange}
         maxLength={2}
         placeholder="0"
-        className="w-20 text-center bg-[#1A1A1A] border border-[#F6C900]/30 text-[#FAF6EB] rounded-sm px-2 py-3 text-xl font-bold outline-none focus:border-[#F6C900] transition-colors placeholder:text-[#FAF6EB]/30"
+        className="w-20 text-center bg-[#5A1220] border border-[#F7EDE0]/30 text-[#F7EDE0] rounded-sm px-2 py-3 text-xl font-bold outline-none focus:border-[#F7EDE0] transition-colors placeholder:text-[#F7EDE0]/30"
       />
     </div>
   );
@@ -113,7 +113,7 @@ export default function ResultModal({ game }: ResultModalProps) {
       <div className="flex items-center justify-center gap-2">
         <button
           onClick={() => setOpen(true)}
-          className="text-xs text-[#F6C900] underline underline-offset-2 hover:text-[#D4A800] transition-colors"
+          className="text-xs text-[#F7EDE0] underline underline-offset-2 hover:text-[#EDE0CE] transition-colors"
         >
           Editar resultado
         </button>
@@ -129,9 +129,9 @@ export default function ResultModal({ game }: ResultModalProps) {
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
           onClick={(e) => e.target === e.currentTarget && setOpen(false)}
         >
-          <div className="bg-[#1A1A1A] border border-[#F6C900]/20 rounded-sm p-6 w-full max-w-sm">
-            <h3 className="text-[#F6C900] font-bold text-lg mb-1">Editar Resultado</h3>
-            <p className="text-[#FAF6EB]/50 text-sm mb-3">
+          <div className="bg-[#5A1220] border border-[#F7EDE0]/20 rounded-sm p-6 w-full max-w-sm">
+            <h3 className="text-[#F7EDE0] font-bold text-lg mb-1">Editar Resultado</h3>
+            <p className="text-[#F7EDE0]/50 text-sm mb-3">
               {homeLabel} × {awayLabel}
             </p>
 
@@ -156,7 +156,7 @@ export default function ResultModal({ game }: ResultModalProps) {
               {/* Placar */}
               <div className="flex flex-wrap gap-4 items-end">
                 <ScoreField label={homeLabel} value={homeScore} onChange={setHomeScore} />
-                <span className="text-[#F6C900] font-bold text-2xl pb-3">×</span>
+                <span className="text-[#F7EDE0] font-bold text-2xl pb-3">×</span>
                 <ScoreField label={awayLabel} value={awayScore} onChange={setAwayScore} />
               </div>
               {(errors.home || errors.away) && (
@@ -165,8 +165,8 @@ export default function ResultModal({ game }: ResultModalProps) {
 
               {/* Posse de bola */}
               <div className="flex flex-col gap-2">
-                <span className="text-xs font-bold text-[#F6C900] uppercase tracking-wider">Posse de bola (%)</span>
-                <p className="text-[#FAF6EB]/40 text-xs -mt-1">De qual time?</p>
+                <span className="text-xs font-bold text-[#F7EDE0] uppercase tracking-wider">Posse de bola (%)</span>
+                <p className="text-[#F7EDE0]/40 text-xs -mt-1">De qual time?</p>
                 <div className="flex gap-2">
                   {(["home", "away"] as const).map((side) => {
                     const label = side === "home" ? homeLabel : awayLabel;
@@ -177,8 +177,8 @@ export default function ResultModal({ game }: ResultModalProps) {
                         type="button"
                         onClick={() => setPossessionTeam(side)}
                         className={`px-3 py-1.5 rounded-sm text-xs font-bold border transition-all ${
-                          active ? "bg-[#F6C900] border-[#F6C900] text-[#1A1A1A]"
-                            : "bg-transparent border-[#F6C900]/30 text-[#FAF6EB]/60 hover:border-[#F6C900]/60"
+                          active ? "bg-[#F7EDE0] border-[#F7EDE0] text-[#5A1220]"
+                            : "bg-transparent border-[#F7EDE0]/30 text-[#F7EDE0]/60 hover:border-[#F7EDE0]/60"
                         }`}
                       >
                         {label}
@@ -201,9 +201,9 @@ export default function ResultModal({ game }: ResultModalProps) {
                     }}
                     placeholder="50"
                     maxLength={3}
-                    className="w-20 text-center bg-[#1A1A1A] border border-[#F6C900]/30 text-[#FAF6EB] rounded-sm px-2 py-2 text-base font-bold outline-none focus:border-[#F6C900] transition-colors placeholder:text-[#FAF6EB]/30"
+                    className="w-20 text-center bg-[#5A1220] border border-[#F7EDE0]/30 text-[#F7EDE0] rounded-sm px-2 py-2 text-base font-bold outline-none focus:border-[#F7EDE0] transition-colors placeholder:text-[#F7EDE0]/30"
                   />
-                  <span className="text-[#FAF6EB]/40 text-sm">%</span>
+                  <span className="text-[#F7EDE0]/40 text-sm">%</span>
                 </div>
                 {errors.possession && <p className="text-red-400 text-xs">{errors.possession}</p>}
               </div>

@@ -86,7 +86,7 @@ const CheckInButton = forwardRef<CheckInHandle, CheckInButtonProps>(function Che
   // Concluído → selo fixo, sem botão
   if (status === "success") {
     return (
-      <div className="border-t border-[#F6C900]/10 pt-4 mt-1 flex items-center gap-2">
+      <div className="border-t border-[#F7EDE0]/10 pt-4 mt-1 flex items-center gap-2">
         <span className="text-green-400 text-lg">✓</span>
         <span className="text-green-400 text-sm font-bold">
           Sua presença foi confirmada, você ganhou pontos
@@ -96,12 +96,12 @@ const CheckInButton = forwardRef<CheckInHandle, CheckInButtonProps>(function Che
   }
 
   return (
-    <div className="border-t border-[#F6C900]/10 pt-4 mt-1 flex flex-col gap-2">
+    <div className="border-t border-[#F7EDE0]/10 pt-4 mt-1 flex flex-col gap-2">
       <button
         type="button"
         onClick={handleCheckIn}
         disabled={status === "locating" || status === "checking"}
-        className="flex items-center justify-center gap-2 w-full border border-green-500/40 bg-[#004600] hover:bg-[#005700] text-[#F6C900] font-bold py-3 px-4 rounded-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm uppercase tracking-wider"
+        className="flex items-center justify-center gap-2 w-full border border-green-500/40 bg-[#7D1A2E] hover:bg-[#8A2236] text-[#F7EDE0] font-bold py-3 px-4 rounded-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm uppercase tracking-wider"
       >
         {status === "locating" ? (
           "Obtendo localização..."
@@ -114,7 +114,7 @@ const CheckInButton = forwardRef<CheckInHandle, CheckInButtonProps>(function Che
           </>
         )}
       </button>
-      <p className="text-[#FAF6EB]/30 text-xs text-center">
+      <p className="text-[#F7EDE0]/30 text-xs text-center">
         Check-in válido para presentes no restaurante
       </p>
       {(status === "far" || status === "error") && (

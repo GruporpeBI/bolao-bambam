@@ -43,13 +43,13 @@ export default async function AdminPage() {
   const locationConfig = await getLocationConfig();
 
   return (
-    <main className="min-h-screen bg-[#1A1A1A]">
-      <header className="border-b border-[#F6C900]/20 px-6 py-4">
+    <main className="min-h-screen bg-[#5A1220]">
+      <header className="border-b border-[#F7EDE0]/20 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center gap-3">
-          <IconEscudo width={32} height={54} />
+          <IconEscudo width={56} height={44} />
           <div className="flex-1">
-            <p className="text-[#FAF6EB]/40 text-xs uppercase tracking-widest">Mercearia Amauri</p>
-            <h1 className="text-[#F6C900] font-bold text-lg leading-tight">Painel Admin</h1>
+            <p className="text-[#F7EDE0]/40 text-xs uppercase tracking-widest">Bam Bam Café</p>
+            <h1 className="text-[#F7EDE0] font-bold text-lg leading-tight">Painel Admin</h1>
           </div>
           <LogoutButton />
         </div>

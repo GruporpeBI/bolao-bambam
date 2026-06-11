@@ -80,13 +80,13 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
   const tabClass = (t: Tab) =>
     `px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${
       tab === t
-        ? "border-[#F6C900] text-[#F6C900]"
-        : "border-transparent text-[#FAF6EB]/50 hover:text-[#FAF6EB]"
+        ? "border-[#F7EDE0] text-[#F7EDE0]"
+        : "border-transparent text-[#F7EDE0]/50 hover:text-[#F7EDE0]"
     }`;
 
   return (
     <div>
-      <div className="flex border-b border-[#F6C900]/20 mb-6">
+      <div className="flex border-b border-[#F7EDE0]/20 mb-6">
         <button className={tabClass("games")} onClick={() => setTab("games")}>
           Jogos da Copa
         </button>
@@ -104,19 +104,19 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
       {tab === "games" && (
         <div>
           <div className="mb-5">
-            <p className="text-[#FAF6EB]/50 text-sm">
+            <p className="text-[#F7EDE0]/50 text-sm">
               {games.length} jogo(s) no banco de dados
             </p>
           </div>
           {games.length === 0 ? (
-            <p className="text-[#FAF6EB]/40 text-sm py-8 text-center">
+            <p className="text-[#F7EDE0]/40 text-sm py-8 text-center">
               Nenhum jogo encontrado.
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[#F6C900]/20 text-[#FAF6EB]/50 text-xs uppercase tracking-wider">
+                  <tr className="border-b border-[#F7EDE0]/20 text-[#F7EDE0]/50 text-xs uppercase tracking-wider">
                     <th className="py-3 text-left pr-4">Jogo</th>
                     <th className="py-3 text-left pr-4">Fase</th>
                     <th className="py-3 text-left pr-4">Tags</th>
@@ -138,7 +138,7 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
       {tab === "results" && (
         <div>
           <div className="flex items-center justify-between mb-5">
-            <p className="text-[#FAF6EB]/50 text-sm">
+            <p className="text-[#F7EDE0]/50 text-sm">
               {enabledGames.length} jogo(s) habilitado(s)
             </p>
             <div className="flex items-center gap-3">
@@ -160,7 +160,7 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
             </div>
           </div>
           {enabledGames.length === 0 ? (
-            <p className="text-[#FAF6EB]/40 text-sm py-8 text-center">
+            <p className="text-[#F7EDE0]/40 text-sm py-8 text-center">
               Nenhum jogo habilitado ainda.
             </p>
           ) : (
@@ -168,14 +168,14 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
               {enabledGames.map((game) => (
                 <div
                   key={game.id}
-                  className="flex flex-col gap-3 border border-[#F6C900]/20 rounded px-4 py-4 bg-[#1A1A1A]"
+                  className="flex flex-col gap-3 border border-[#F7EDE0]/20 rounded px-4 py-4 bg-[#5A1220]"
                 >
                   {/* Header: match name + date */}
                   <div className="text-center">
-                    <p className="text-[#FAF6EB] font-semibold text-sm leading-tight">
+                    <p className="text-[#F7EDE0] font-semibold text-sm leading-tight">
                       {game.home_team} × {game.away_team}
                     </p>
-                    <p className="text-[#FAF6EB]/40 text-xs mt-1">
+                    <p className="text-[#F7EDE0]/40 text-xs mt-1">
                       {new Date(game.scheduled_at).toLocaleDateString("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
@@ -189,7 +189,7 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
                   <div className="text-center">
                     {game.home_score !== null && game.away_score !== null ? (
                       <>
-                        <span className="text-[#F6C900] font-bold text-2xl">
+                        <span className="text-[#F7EDE0] font-bold text-2xl">
                           {game.home_score} – {game.away_score}
                         </span>
                         {game.ball_possession_home !== null && (() => {
@@ -197,14 +197,14 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
                           const team = hp > 50 ? game.home_team : hp < 50 ? game.away_team : null;
                           const pct  = hp > 50 ? hp : 100 - hp;
                           return team ? (
-                            <p className="text-[#FAF6EB]/40 text-xs mt-0.5">
+                            <p className="text-[#F7EDE0]/40 text-xs mt-0.5">
                               {team} {pct}% posse
                             </p>
                           ) : null;
                         })()}
                       </>
                     ) : (
-                      <span className="text-[#FAF6EB]/25 text-sm">Sem resultado</span>
+                      <span className="text-[#F7EDE0]/25 text-sm">Sem resultado</span>
                     )}
                   </div>
 
@@ -235,19 +235,19 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
 
       {tab === "attendances" && (
         <div>
-          <p className="text-[#FAF6EB]/50 text-sm mb-5">
+          <p className="text-[#F7EDE0]/50 text-sm mb-5">
             Marque presença manual por usuário e jogo.
           </p>
           {enabledGames.length === 0 || users.length === 0 ? (
-            <p className="text-[#FAF6EB]/40 text-sm py-8 text-center">
+            <p className="text-[#F7EDE0]/40 text-sm py-8 text-center">
               Nenhum jogo habilitado ou nenhum usuário cadastrado.
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[#F6C900]/20 text-[#FAF6EB]/50 text-xs uppercase tracking-wider">
-                    <th className="py-3 text-left pr-4 sticky left-0 bg-[#1A1A1A]">
+                  <tr className="border-b border-[#F7EDE0]/20 text-[#F7EDE0]/50 text-xs uppercase tracking-wider">
+                    <th className="py-3 text-left pr-4 sticky left-0 bg-[#5A1220]">
                       Participante
                     </th>
                     {enabledGames.map((g) => (
@@ -265,9 +265,9 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
                   {users.map((user) => (
                     <tr
                       key={user.id}
-                      className="border-b border-[#F6C900]/10 hover:bg-[#F6C900]/5 transition-colors"
+                      className="border-b border-[#F7EDE0]/10 hover:bg-[#F7EDE0]/5 transition-colors"
                     >
-                      <td className="py-3 pr-4 sticky left-0 bg-[#1A1A1A] font-medium text-[#FAF6EB]">
+                      <td className="py-3 pr-4 sticky left-0 bg-[#5A1220] font-medium text-[#F7EDE0]">
                         {user.name}
                       </td>
                       {enabledGames.map((game) => {
@@ -281,7 +281,7 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
                               <button
                                 onClick={() => handleCheckIn(user.id, game.id)}
                                 disabled={checkingIn === key}
-                                className="text-[#FAF6EB]/20 hover:text-[#F6C900] text-lg transition-colors disabled:opacity-50"
+                                className="text-[#F7EDE0]/20 hover:text-[#F7EDE0] text-lg transition-colors disabled:opacity-50"
                                 title="Marcar presença"
                               >
                                 {checkingIn === key ? "..." : "○"}
@@ -302,7 +302,7 @@ export default function AdminTabs({ games, users, attendances, locationConfig }:
       {tab === "localizacao" && (
         <div>
           <div className="mb-5">
-            <p className="text-[#F6C900] font-bold text-base mb-1">Configuração de Geolocalização</p>
+            <p className="text-[#F7EDE0] font-bold text-base mb-1">Configuração de Geolocalização</p>
           </div>
           <LocationConfig
             initialLat={locationConfig.lat}

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { IconTacaJules } from "@/components/icons";
+import { IconTacaPenta } from "@/components/icons";
 import Badge from "@/components/ui/Badge";
 import RankingTable from "./RankingTable";
 import { teamName } from "@/lib/team-names";
@@ -269,15 +269,15 @@ export default async function RankingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#1A1A1A]">
-      <section className="bg-gradient-to-b from-[#004600] to-[#1A1A1A] px-6 py-14">
-        <div className="max-w-3xl mx-auto flex flex-col items-center gap-4 text-center">
-          <IconTacaJules width={56} height={84} />
-          <h1 className="text-4xl font-bold text-[#F6C900] uppercase tracking-tight">
+    <main className="min-h-screen bg-[#5A1220]">
+      <section className="bam-hero-texture relative overflow-hidden bg-[#7D1A2E] px-6 py-16">
+        <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center gap-3 text-center">
+          <IconTacaPenta width={60} height={97} />
+          <h1 className="font-display text-5xl font-semibold text-[#F7EDE0] uppercase tracking-tight">
             Ranking
           </h1>
-          <p className="text-[#FAF6EB]/60 text-sm max-w-md">
-            Classificação dos 10 melhores do Bolão Copa 2026 — Mercearia Amauri
+          <p className="text-[#F7EDE0]/55 text-sm max-w-md">
+            Classificação dos 10 melhores do Bolão Copa 2026 — Bam Bam Café
           </p>
           <Badge variant="green" className="text-xs">
             Atualizado em tempo real
@@ -287,7 +287,7 @@ export default async function RankingPage() {
           {liveGames.length > 0 && (
             <div className="flex flex-col gap-2 w-full max-w-sm mt-2">
               {liveGames.map((g) => (
-                <div key={g.id} className="bg-[#004600]/60 border border-green-500/30 rounded-sm px-4 py-3 flex flex-col gap-1">
+                <div key={g.id} className="bg-[#7D1A2E]/60 border border-green-500/30 rounded-sm px-4 py-3 flex flex-col gap-1">
                   <div className="flex items-center justify-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse shrink-0" />
                     <span className="text-green-400 text-xs font-bold uppercase tracking-wider">
@@ -295,16 +295,16 @@ export default async function RankingPage() {
                     </span>
                   </div>
                   <div className="flex items-center justify-center gap-3 mt-1">
-                    <span className="text-[#FAF6EB] font-semibold text-sm">{teamName(g.home_team)}</span>
-                    <span className="text-[#F6C900] font-black text-2xl">{g.home_score} × {g.away_score}</span>
-                    <span className="text-[#FAF6EB] font-semibold text-sm">{teamName(g.away_team)}</span>
+                    <span className="text-[#F7EDE0] font-semibold text-sm">{teamName(g.home_team)}</span>
+                    <span className="text-[#F7EDE0] font-black text-2xl">{g.home_score} × {g.away_score}</span>
+                    <span className="text-[#F7EDE0] font-semibold text-sm">{teamName(g.away_team)}</span>
                   </div>
                   {g.live_possession_home != null && g.live_possession_home > 0 && g.live_possession_home < 100 && g.live_possession_home !== 50 && (
-                    <p className="text-[#FAF6EB]/50 text-xs text-center mt-0.5">
+                    <p className="text-[#F7EDE0]/50 text-xs text-center mt-0.5">
                       {g.live_possession_home > 50
                         ? `${teamName(g.home_team)} ${g.live_possession_home}% posse`
                         : `${teamName(g.away_team)} ${100 - g.live_possession_home}% posse`}
-                      <span className="text-[#FAF6EB]/30"> · ao vivo</span>
+                      <span className="text-[#F7EDE0]/30"> · ao vivo</span>
                     </p>
                   )}
                 </div>
@@ -318,7 +318,7 @@ export default async function RankingPage() {
         {top10.length === 0 && gameRankings.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
             <Badge variant="dark">Em breve</Badge>
-            <p className="text-[#FAF6EB]/50 text-lg">
+            <p className="text-[#F7EDE0]/50 text-lg">
               O ranking será exibido assim que os participantes se cadastrarem.
             </p>
           </div>

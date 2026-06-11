@@ -84,17 +84,17 @@ export default function RegisterModal({ cpf, onClose }: RegisterModalProps) {
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
     >
-      <div className="bg-[#252525] border border-[#F6C900]/20 rounded-sm w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-[#6E1727] border border-[#F7EDE0]/20 rounded-sm w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[#F6C900]/10">
+        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[#F7EDE0]/10">
           <div>
-            <p className="text-[#F6C900]/70 text-xs uppercase tracking-widest font-semibold">CPF não cadastrado</p>
-            <h2 className="text-[#F6C900] font-bold text-lg leading-tight">Criar cadastro</h2>
+            <p className="text-[#F7EDE0]/70 text-xs uppercase tracking-widest font-semibold">CPF não cadastrado</p>
+            <h2 className="text-[#F7EDE0] font-bold text-lg leading-tight">Criar cadastro</h2>
           </div>
           <button
             onClick={onClose}
-            className="text-[#FAF6EB]/40 hover:text-[#FAF6EB] transition-colors text-2xl leading-none w-8 h-8 flex items-center justify-center"
+            className="text-[#F7EDE0]/40 hover:text-[#F7EDE0] transition-colors text-2xl leading-none w-8 h-8 flex items-center justify-center"
             aria-label="Fechar"
           >
             ×
@@ -106,14 +106,14 @@ export default function RegisterModal({ cpf, onClose }: RegisterModalProps) {
 
           {/* CPF (desabilitado — já preenchido) */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-semibold text-[#F6C900] uppercase tracking-wider">CPF</label>
+            <label className="text-sm font-semibold text-[#F7EDE0] uppercase tracking-wider">CPF</label>
             <input
               type="text"
               value={cpf}
               disabled
-              className="w-full bg-[#1A1A1A] border border-[#F6C900]/20 text-[#FAF6EB]/50 rounded-sm px-4 py-3 text-base outline-none cursor-not-allowed"
+              className="w-full bg-[#5A1220] border border-[#F7EDE0]/20 text-[#F7EDE0]/50 rounded-sm px-4 py-3 text-base outline-none cursor-not-allowed"
             />
-            <span className="text-[#FAF6EB]/30 text-xs">CPF verificado — não pode ser alterado.</span>
+            <span className="text-[#F7EDE0]/30 text-xs">CPF verificado — não pode ser alterado.</span>
           </div>
 
           <Input
@@ -160,14 +160,14 @@ export default function RegisterModal({ cpf, onClose }: RegisterModalProps) {
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
                 disabled={isLoading || isSuccess}
-                className="mt-0.5 w-4 h-4 accent-[#F6C900] cursor-pointer shrink-0"
+                className="mt-0.5 w-4 h-4 accent-[#F7EDE0] cursor-pointer shrink-0"
               />
-              <span className="text-sm text-[#FAF6EB]/70 leading-relaxed">
+              <span className="text-sm text-[#F7EDE0]/70 leading-relaxed">
                 Li e aceito os{" "}
-                <a href="/termos" target="_blank" className="text-[#F6C900] underline underline-offset-2 hover:text-[#e6b800]">
+                <a href="/termos" target="_blank" className="text-[#F7EDE0] underline underline-offset-2 hover:text-[#EDE0CE]">
                   termos e condições
                 </a>{" "}
-                do Bolão Copa 2026 — Mercearia Amauri.
+                do Bolão Copa 2026 — Bam Bam Café.
               </span>
             </label>
             {errors.terms && <span className="text-red-400 text-xs ml-7">{errors.terms}</span>}

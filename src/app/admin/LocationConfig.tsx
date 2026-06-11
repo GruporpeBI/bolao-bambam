@@ -62,21 +62,21 @@ export default function LocationConfig({ initialLat, initialLng, initialRadius }
     );
   }
 
-  const field = "w-full bg-[#1A1A1A] border border-[#F6C900]/30 text-[#FAF6EB] rounded-sm px-4 py-3 text-sm outline-none focus:border-[#F6C900] transition-colors placeholder:text-[#FAF6EB]/30";
+  const field = "w-full bg-[#5A1220] border border-[#F7EDE0]/30 text-[#F7EDE0] rounded-sm px-4 py-3 text-sm outline-none focus:border-[#F7EDE0] transition-colors placeholder:text-[#F7EDE0]/30";
 
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-6 max-w-lg">
-      <p className="text-[#FAF6EB]/50 text-sm">
+      <p className="text-[#F7EDE0]/50 text-sm">
         Configure a localização do restaurante para o check-in por geolocalização.
         Obtenha as coordenadas em{" "}
-        <a href="https://maps.google.com" target="_blank" className="text-[#F6C900] underline">
+        <a href="https://maps.google.com" target="_blank" className="text-[#F7EDE0] underline">
           Google Maps
         </a>{" "}
         → clique direito no local → copie as coordenadas.
       </p>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-bold text-[#F6C900] uppercase tracking-wider">Latitude</label>
+        <label className="text-xs font-bold text-[#F7EDE0] uppercase tracking-wider">Latitude</label>
         <input
           type="text"
           value={lat}
@@ -87,7 +87,7 @@ export default function LocationConfig({ initialLat, initialLng, initialRadius }
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-bold text-[#F6C900] uppercase tracking-wider">Longitude</label>
+        <label className="text-xs font-bold text-[#F7EDE0] uppercase tracking-wider">Longitude</label>
         <input
           type="text"
           value={lng}
@@ -98,7 +98,7 @@ export default function LocationConfig({ initialLat, initialLng, initialRadius }
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-bold text-[#F6C900] uppercase tracking-wider">Raio de check-in (metros)</label>
+        <label className="text-xs font-bold text-[#F7EDE0] uppercase tracking-wider">Raio de check-in (metros)</label>
         <input
           type="number"
           value={radius}
@@ -108,7 +108,7 @@ export default function LocationConfig({ initialLat, initialLng, initialRadius }
           placeholder="400"
           className={field}
         />
-        <p className="text-[#FAF6EB]/30 text-xs">Distância máxima do restaurante para permitir o check-in. Padrão: 400m.</p>
+        <p className="text-[#F7EDE0]/30 text-xs">Distância máxima do restaurante para permitir o check-in. Padrão: 400m.</p>
       </div>
 
       <div className="flex gap-3 flex-wrap">
@@ -118,7 +118,7 @@ export default function LocationConfig({ initialLat, initialLng, initialRadius }
         <button
           type="button"
           onClick={handleTestGeo}
-          className="px-4 py-2 text-sm border border-[#F6C900]/30 text-[#FAF6EB]/70 hover:text-[#F6C900] hover:border-[#F6C900]/60 rounded-sm transition-colors"
+          className="px-4 py-2 text-sm border border-[#F7EDE0]/30 text-[#F7EDE0]/70 hover:text-[#F7EDE0] hover:border-[#F7EDE0]/60 rounded-sm transition-colors"
         >
           📍 Testar minha localização
         </button>

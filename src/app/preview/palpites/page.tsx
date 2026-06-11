@@ -51,21 +51,21 @@ const mockExistingPrediction = {
 
 export default function PalpitesPreviewPage() {
   return (
-    <main className="min-h-screen bg-[#1A1A1A]">
+    <main className="min-h-screen bg-[#5A1220]">
       {/* Banner de preview */}
-      <div className="bg-[#F6C900] text-[#1A1A1A] text-center py-2 text-xs font-bold uppercase tracking-widest">
+      <div className="bg-[#F7EDE0] text-[#5A1220] text-center py-2 text-xs font-bold uppercase tracking-widest">
         Modo Preview — Dados de exemplo — sem Supabase
       </div>
 
       <div className="max-w-3xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="flex items-center gap-4 mb-10">
-          <IconEscudo width={56} height={95} />
+          <IconEscudo width={96} height={75} />
           <div>
-            <h1 className="text-3xl font-bold text-[#F6C900] uppercase tracking-tight">
+            <h1 className="text-3xl font-bold text-[#F7EDE0] uppercase tracking-tight">
               Meus Palpites
             </h1>
-            <p className="text-[#FAF6EB]/50 text-sm mt-1">
+            <p className="text-[#F7EDE0]/50 text-sm mt-1">
               Envie seu palpite até 5 minutos antes de cada jogo
             </p>
           </div>
@@ -88,10 +88,10 @@ export default function PalpitesPreviewPage() {
 
         {/* Palpites do torneio */}
         <div className="mb-2">
-          <h2 className="text-xl font-bold text-[#FAF6EB] uppercase tracking-tight mb-1">
+          <h2 className="text-xl font-bold text-[#F7EDE0] uppercase tracking-tight mb-1">
             Palpites do Torneio
           </h2>
-          <p className="text-[#FAF6EB]/40 text-sm mb-4">
+          <p className="text-[#F7EDE0]/40 text-sm mb-4">
             Semifinalistas, finalistas e campeão — disponível durante os 3 primeiros jogos do Brasil.
           </p>
           <TournamentPredictions disabled={false} existing={null} />
