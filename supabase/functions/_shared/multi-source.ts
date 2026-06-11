@@ -116,11 +116,16 @@ export async function notifyApp(
 // FT detection helpers
 // ---------------------------------------------------------------------------
 
-const FINISHED_LABELS = ["ft", "aet", "pen", "full time", "match finished", "awarded", "finished"];
+// Tokens curtos: match EXATO (evita falso positivo — ex.: "Halftime" contém "ft").
+const FINISHED_EXACT   = ["ft", "aet", "pen", "fin", "final", "finished"];
+// Frases que só ocorrem com o jogo encerrado: match por substring é seguro.
+const FINISHED_PHRASES = ["full time", "full-time", "match finished", "after extra time", "after penalties", "awarded", "ended"];
 
 export function isFinishedStatus(status: string | null): boolean {
   if (!status) return false;
-  return FINISHED_LABELS.some((f) => status.toLowerCase().includes(f));
+  const s = status.toLowerCase().trim();
+  if (FINISHED_EXACT.includes(s)) return true;
+  return FINISHED_PHRASES.some((f) => s.includes(f));
 }
 
 // ---------------------------------------------------------------------------
