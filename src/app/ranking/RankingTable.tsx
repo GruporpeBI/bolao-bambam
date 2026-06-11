@@ -315,6 +315,14 @@ export default function RankingTable({ initialData, gameRankings }: RankingTable
                             <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${medalColors[idx]}`}>
                               {idx + 1}
                             </span>
+                          ) : idx === 3 ? (
+                            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold bg-green-600 text-white">
+                              {idx + 1}
+                            </span>
+                          ) : idx === 4 ? (
+                            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold bg-red-600 text-white">
+                              {idx + 1}
+                            </span>
                           ) : (
                             <span className="text-[#FAF6EB]/40 font-mono text-xs pl-1">{idx + 1}</span>
                           )}
