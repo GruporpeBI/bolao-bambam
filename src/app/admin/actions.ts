@@ -241,9 +241,9 @@ export async function recalculateScores(): Promise<{ success: boolean; error?: s
     const predResult = Math.sign(predHome - predAway);
     const isResultCorrect = actualResult === predResult;
 
-    if (game.is_final && isExact) {
-      scoresByUser[uid].exact_score_pts += 121;
-    } else if (isExact) {
+    // Palpite de jogo (inclui semi/final no dia): placar exato 30, ganhador 16.
+    // O 121 do placar exato da final vem APENAS do palpite antecipado (bracket).
+    if (isExact) {
       scoresByUser[uid].exact_score_pts += 30;
     } else if (isResultCorrect) {
       scoresByUser[uid].result_pts += 16;

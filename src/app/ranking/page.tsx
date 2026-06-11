@@ -50,13 +50,13 @@ function gamePts(
   homePred: number,
   awayPred: number,
   homeScore: number,
-  awayScore: number,
-  isFinal: boolean
+  awayScore: number
 ): number {
+  // Palpite de jogo (inclui semi/final no dia): placar exato 30, ganhador 16.
+  // O 121 da final é do palpite antecipado (bracket), não deste card.
   const isExact = homePred === homeScore && awayPred === awayScore;
   const actualResult = Math.sign(homeScore - awayScore);
   const predResult = Math.sign(homePred - awayPred);
-  if (isFinal && isExact) return 121;
   if (isExact) return 30;
   if (actualResult === predResult) return 16;
   return 0;
@@ -216,7 +216,7 @@ export default async function RankingPage() {
         const entries: GameRankingEntry[] = (preds ?? [])
           .map((p) => {
             const pts = hasResult
-              ? gamePts(p.home_score_pred, p.away_score_pred, game.home_score!, game.away_score!, game.is_final)
+              ? gamePts(p.home_score_pred, p.away_score_pred, game.home_score!, game.away_score!)
               : 0;
 
             // 1 se acertou qual time teria mais posse (ambos > 50 ou ambos < 50)

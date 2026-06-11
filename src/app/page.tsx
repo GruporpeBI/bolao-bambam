@@ -9,12 +9,12 @@ import AdminButton from "@/components/AdminButton";
 const pontuacao = [
   { evento: "Presença no restaurante (jogo Brasil)", pts: 51 },
   { evento: "Acertou o ganhador (sem placar exato)", pts: 16 },
-  { evento: "Placar exato", pts: 30 },
-  { evento: "Semifinalista correto (cada)", pts: 27 },
-  { evento: "Finalista correto (cada)", pts: 40 },
-  { evento: "Campeão correto", pts: 101 },
-  { evento: "Placar exato da final", pts: 121 },
-  { evento: "Presença na final", pts: 100 },
+  { evento: "Placar exato (todos os jogos)", pts: 30 },
+  { evento: "Semifinalista correto (cada, palpite antecipado)", pts: 27 },
+  { evento: "Finalista correto (cada, palpite antecipado)", pts: 40 },
+  { evento: "Campeão correto (palpite antecipado)", pts: 101 },
+  { evento: "Placar exato da final (palpite antecipado)", pts: 121 },
+  { evento: "Presença na final (mesmo sendo jogo do Brasil)", pts: 100 },
 ];
 
 export default function HomePage() {
@@ -131,7 +131,11 @@ export default function HomePage() {
             ))}
           </div>
 
-          <p className="text-[#FAF6EB]/50 text-sm text-center mt-6">
+          <p className="text-[#FAF6EB]/60 text-sm text-center mt-6">
+            A <span className="text-[#F6C900] font-semibold">final</span> abre para palpite de placar <span className="text-[#F6C900] font-semibold">no dia do jogo</span> (mesmo sem o Brasil). A <span className="text-[#F6C900] font-semibold">semifinal</span> abre no dia <span className="text-[#F6C900] font-semibold">apenas se for jogo do Brasil</span>. Esses palpites do dia (placar exato 30 / ganhador 16) somam com os palpites antecipados do torneio.
+          </p>
+
+          <p className="text-[#FAF6EB]/50 text-sm text-center mt-4">
             Em caso de empate, o desempate é por número de presenças, placares exatos, acertos de ganhador, e proximidade na % de posse de bola.
           </p>
         </div>

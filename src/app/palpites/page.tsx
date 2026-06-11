@@ -38,10 +38,15 @@ export default async function PalpitesPage() {
   const allEnabled = (gamesData as GameRow[] | null) ?? [];
   const today = todayBrasilia();
 
-  // Apenas jogos regulares (não semis/final — esses ficam no bloco de palpites do torneio)
-  const regularGames = allEnabled.filter(
-    (g) => g.stage !== "semifinal" && g.stage !== "final"
-  );
+  // Jogos regulares + semi/final liberadas como card SÓ no dia do jogo:
+  //   - final: sempre vira card no dia (mesmo sem o Brasil)
+  //   - semifinal: vira card no dia apenas se for jogo do Brasil
+  const regularGames = allEnabled.filter((g) => {
+    if (g.stage !== "semifinal" && g.stage !== "final") return true; // jogos normais
+    if (gameDayBrasilia(g.scheduled_at) !== today) return false;     // semi/final: só no dia
+    if (g.stage === "final") return true;                            // final: sempre
+    return g.is_brazil_game;                                          // semifinal: só se for Brasil
+  });
 
   // Jogo com check-in habilitado hoje para check-in
   const todayCheckinGame = allEnabled.find(
