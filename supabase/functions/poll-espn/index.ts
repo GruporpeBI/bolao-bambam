@@ -89,10 +89,12 @@ async function fetchEspn(espnId: string, league: string): Promise<EspnMatchData>
   const completed  = comp?.status?.type?.completed === true;
   const homeTeamId = homeC?.id ?? null;
 
-  // Posse de bola
+  // Posse de bola — ESPN às vezes retorna 0/0 quando não há estatística para o jogo.
+  // Posse 0 (ou fora de 1–99) é impossível num jogo real → tratar como "sem dado" (null).
   const homeStats = (d.boxscore?.teams?.[0]?.statistics ?? []) as EspnStat[];
   const possEntry  = homeStats.find((s) => s.name === "possessionPct");
-  const possession = possEntry?.displayValue ? parseFloat(possEntry.displayValue) : null;
+  const possRaw    = possEntry?.displayValue ? parseFloat(possEntry.displayValue) : null;
+  const possession = possRaw != null && possRaw > 0 && possRaw < 100 ? possRaw : null;
 
   // Gols via keyEvents
   const goals = ((d.keyEvents ?? []) as EspnKeyEvent[])

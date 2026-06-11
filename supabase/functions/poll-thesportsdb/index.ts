@@ -84,7 +84,9 @@ async function fetchEspnAdHoc(
     displayValue: string;
   }>;
   const possEntry   = homeStats.find((s) => s.name === "possessionPct");
-  const possession  = possEntry?.displayValue ? parseFloat(possEntry.displayValue) : null;
+  const possRaw     = possEntry?.displayValue ? parseFloat(possEntry.displayValue) : null;
+  // Posse 0 (ou fora de 1–99) é impossível → "sem dado" (null)
+  const possession  = possRaw != null && possRaw > 0 && possRaw < 100 ? possRaw : null;
 
   return { home: homeScore, away: awayScore, possession, status };
 }

@@ -293,7 +293,7 @@ export default async function RankingPage() {
                     <span className="text-[#F6C900] font-black text-2xl">{g.home_score} × {g.away_score}</span>
                     <span className="text-[#FAF6EB] font-semibold text-sm">{teamName(g.away_team)}</span>
                   </div>
-                  {g.ball_possession_home != null && g.ball_possession_home !== 50 && (
+                  {g.ball_possession_home != null && g.ball_possession_home > 0 && g.ball_possession_home < 100 && g.ball_possession_home !== 50 && (
                     <p className="text-[#FAF6EB]/50 text-xs text-center mt-0.5">
                       {g.ball_possession_home > 50
                         ? `${teamName(g.home_team)} ${g.ball_possession_home}% posse`
