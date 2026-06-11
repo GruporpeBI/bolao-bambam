@@ -111,6 +111,24 @@ export default async function PalpitesPage() {
            (g as { espn_league?: string | null }).espn_league === "fifa.world"
   ).length >= 3;
 
+  // Ordena os jogos: janela de palpite ABERTA primeiro (e dentro disso, os ainda não
+  // palpitados antes), depois os demais — sempre cronológico dentro de cada grupo.
+  const nowMs = Date.now();
+  const predictionOpen = (g: GameRow): boolean => {
+    const isPredDay = !!(g as { predictions_early?: boolean }).predictions_early || gameDayBrasilia(g.scheduled_at) === today;
+    const deadlineMs = new Date(g.scheduled_at).getTime() - 5 * 60 * 1000;
+    return isPredDay && nowMs < deadlineMs;
+  };
+  const gameTier = (g: GameRow): number => {
+    if (predictionOpen(g)) return predictions[g.id] ? 1 : 0; // 0 = aberto sem palpite, 1 = aberto já palpitado
+    return 2;                                                 // 2 = fechado / ainda não aberto
+  };
+  const orderedGames = [...regularGames].sort((a, b) => {
+    const t = gameTier(a) - gameTier(b);
+    if (t !== 0) return t;
+    return new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime();
+  });
+
   return (
     <main className="min-h-screen bg-[#1A1A1A]">
       <div className="max-w-3xl mx-auto px-4 py-10">
@@ -160,7 +178,7 @@ export default async function PalpitesPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {regularGames.map((game) => {
+            {orderedGames.map((game) => {
               const isPredictionDay = !!(game as { predictions_early?: boolean }).predictions_early || gameDayBrasilia(game.scheduled_at) === today;
               const isThisGameCheckedIn = alreadyCheckedIn && todayCheckinGame?.id === game.id;
               const checkinEnabled = !!(game as { checkin_enabled?: boolean }).checkin_enabled;
